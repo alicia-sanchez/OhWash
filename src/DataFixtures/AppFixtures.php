@@ -9,12 +9,19 @@ use App\Entity\User;
 use App\Entity\CategoryService;
 use App\Entity\Service;
 use App\Entity\ServiceHasCategoryService;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+
+    public function __construct(private UserPasswordHasherInterface $hasher)
+    {
+    }
+
     public function load(ObjectManager $manager)
     {
         $faker = Factory::create('fr_FR');
+     
 
         for ($i = 0; $i < 5; $i++) {
             $user = new User();
@@ -22,7 +29,7 @@ class AppFixtures extends Fixture
                 ->setEmail($faker->email)
                 ->setFirstname($faker->firstName)
                 ->setLastname($faker->lastName)
-                ->setPassword(password_hash('user', PASSWORD_BCRYPT))
+                ->setPassword($this->hasher->hashPassword($user, 'test'))
                 ->setRoles(['ROLE_USER'])
                 ->setGender($faker->randomElement(['male', 'female']))
                 ->setAdress($faker->address);
@@ -35,7 +42,7 @@ class AppFixtures extends Fixture
                 ->setEmail('admin@admin.com')
                 ->setFirstname($faker->firstName)
                 ->setLastname($faker->lastName)
-                ->setPassword(password_hash('admin', PASSWORD_BCRYPT))
+                ->setPassword($this->hasher->hashPassword($user, 'admin'))
                 ->setRoles(['ROLE_ADMIN'])
                 ->setGender($faker->randomElement(['male', 'female']))
                 ->setAdress($faker->address);
