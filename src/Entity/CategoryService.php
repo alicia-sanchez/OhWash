@@ -27,9 +27,16 @@ class CategoryService
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $Information = null;
+
+    #[ORM\OneToMany(mappedBy: 'CategoryService', targetEntity: CategoryArticle::class, orphanRemoval: true)]
+    private Collection $ategoryService_id;
+
     public function __construct()
     {
         $this->category_service_id = new ArrayCollection();
+        $this->ategoryService_id = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -90,4 +97,18 @@ class CategoryService
 
         return $this;
     }
+
+    public function getInformation(): ?string
+    {
+        return $this->Information;
+    }
+
+    public function setInformation(string $Information): static
+    {
+        $this->Information = $Information;
+
+        return $this;
+    }
+
+    
 }

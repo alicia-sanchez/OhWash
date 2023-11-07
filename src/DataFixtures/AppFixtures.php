@@ -9,6 +9,8 @@ use App\Entity\User;
 use App\Entity\CategoryService;
 use App\Entity\Service;
 use App\Entity\ServiceHasCategoryService;
+use App\Entity\CategoryArticle; 
+use App\Entity\Article; 
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
@@ -49,60 +51,69 @@ class AppFixtures extends Fixture
 
             $manager->persist($admin);
 
-//CATEGORY SERVICE
-
-$categories = [
-    ['Pressing', 'Pour des vêtements et tissus délicats'],
-    ['Blanchisserie', 'Services de lavage, séchage et pliage pour votre linge quotidien'],
-    ['Ameublement', 'Pour les articles plus volumineux qui nécessitent des soins supplémentaires.'],
-    ['Retouches', 'Ajustements et modifications sur mesure'],
-];
-
-$categoryServiceEntities = [];
-
-foreach ($categories as $categoryData) {
-    $categoryService = new CategoryService();
-    $categoryService->setName($categoryData[0]);
-    $categoryService->setDescription($categoryData[1]);
-    $manager->persist($categoryService); 
-    $categoryServiceEntities[] = $categoryService;
-}
 
 
+//PRESSING
+$categoryServicePressing = new CategoryService();
+        $categoryServicePressing->setName('Pressing');
+        $categoryServicePressing->setDescription('Pour des vêtements et tissus délicats');
+        $categoryServicePressing->setInformation('Laver + Repassage + sur cintre');
+        $manager->persist($categoryServicePressing);
 
-$services = [
-    ['Nettoyage à sec', "Nettoyage doux sans produits chimiques agressifs, préservant la qualité de vos tissus et de l'environnement.", 10.00, 1],
-    ['Nettoyage de tissus délicats', "Nettoyage doux sans produits chimiques agressifs, préservant la qualité de vos tissus et de l'environnement.", 15.00, 1],
-    ['Repassage', 'description à venir', 5.00, 4],
-    ['Lavage de linge de maison', 'Fraîcheur et propreté écologique pour tous vos textiles de maison.', 5.00, 4],  
-    ['Traitement anti-tâche et désinfection', 'Élimination des taches tenaces et désinfection pour une propreté impeccable.', 5.00, 4],
-    ['Lavage et pliage de linge au kilo', "Utilisation d'eau recyclée et de détergents écologiques pour nettoyer votre linge de manière durable.", 5.00, 4],
-    ['Nettoyage rideaux et voilages', 'Soin délicat pour éliminer la poussière et les odeurs, tout en préservant la qualité des tissus.', 5.00, 4],
-    ['Nettoyage de tapis et moquettes', "Un service de nettoyage en profondeur qui utilise des composés entièrement naturels.", 5.00, 4],
-    ['Aujustement de taille pour vêtements', 'Modification précise de vos vêtements pour un ajustement parfait à votre silhouette.', 5.00, 4],
-    ['Réparation de déchirures et remplacement de fermetures éclairs', 'Chaque intervention vise à prolonger la durée de vie de vos pièces avec des matériaux recyclés ou réutilisés.', 5.00, 4],
-    ['Customisation et modification pour vêtements', 'Personnalisation créative pour renouveler et adapter vos pièces à votre style unique.', 5.00, 4],
-];
+//BLANCHISSERIE
+$categoryServiceBlanchisserie = new CategoryService();
+        $categoryServiceBlanchisserie->setName('Blanchisserie');
+        $categoryServiceBlanchisserie->setDescription('Services de lavage, séchage et pliage pour votre linge quotidien');
+        $categoryServiceBlanchisserie->setInformation('Laver + Secher au sèche-linge + dans un sac');
+        $manager->persist($categoryServiceBlanchisserie);
+
+//AMEUBLEMENT
+$categoryServiceAmeublement = new CategoryService();
+        $categoryServiceAmeublement->setName('Ameublement');
+        $categoryServiceAmeublement->setDescription('Pour les articles plus volumineux qui nécessitent des soins supplémentaires.');
+        $categoryServiceAmeublement->setInformation('Nettoyage personnalisé');
+        $manager->persist($categoryServiceAmeublement);
+        
+//RETOUCHE
+        
+        
+$categoryServiceRetouche = new CategoryService();
+        $categoryServiceRetouche->setName('Retouche');
+        $categoryServiceRetouche->setDescription('Ajustements et modifications sur mesure.');
+        $categoryServiceRetouche->setInformation('Voir directement avec nos professionnels');
+        $manager->persist($categoryServiceRetouche);
 
 
-foreach ($services as $serviceData) {
-    $service = new Service();
-    $service->setName($serviceData[0]);
-    $service->setDescription($serviceData[1]);
+$categoriesArticles = [
+        'Vêtement d\'extérieur' => ['Veste', 'Imperméable', 'Doudoune', 'Blouson / Parka'],
+        'Tenue de tous les jours' => ['Pull', 'T-shirt', 'Pantalon', 'Jean', 'Jupe', 'Short', 'Robe'],
+        'Vêtement délicats' => ['Chemisier en soie', 'Pantalon en cuir', 'Pull cachemire', 'Robe en cuir', 'Chemisier en dentelle'],
+        'Tenue de soirée' => ['Costume (2 pièces)', 'Costume (3 pièces)', 'Robe de soirée'],
+        'Accessoires' => ['Foulard / Echarpe', 'Cravate / Noeud papillon', 'Chaussettes / Sous-vêtements'],
+        'Linge de maison' => [
+            'Drap - Simple', 'Drap - Double', 'Housse de couette - Simple', 'Housse de couette - Double',
+            'Housse de coussin - Petit', 'Housse de coussin - Moyen', 'Housse de coussin - Grand', "Taie d'oreiller"
+        ],
+        'Bains' => ['Tapis de bain', 'Serviette de bain', 'Serviette de toilette', 'Peignoir de bain'],
+        'Linge de cuisine' => ['Nappe (2m)', 'Nappe (4m)', 'Serviette de table', 'Torchon'],
+        ];
 
-   
-    $service->setPrice($serviceData[2]); 
 
-    $priceId = $serviceData[3];
-    $service->setPriceId($priceId); 
+        foreach ($categoriesArticles as $categoryName => $articles) {
+            $categoryArticle = new CategoryArticle();
+            $categoryArticle->setName($categoryName);
+            $categoryArticle->setCategoryService($categoryServicePressing); // Associez la catégorie d'articles à la catégorie de service "Pressing"
+            $manager->persist($categoryArticle);
 
-    $manager->persist($service);
-
-
-
+            foreach ($articles as $articleName) {
+                $article = new Article();
+                $article->setName($articleName);
+                $article->setCategoryArticle($categoryArticle); // Associez l'article à la catégorie d'articles
+                $manager->persist($article);
+            }
+        }
 
 $manager->flush();
 
 }
-    }
 }
