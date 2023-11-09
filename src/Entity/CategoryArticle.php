@@ -23,6 +23,11 @@ class CategoryArticle
     #[ORM\OneToMany(mappedBy: 'categoryArticle', targetEntity: Article::class, orphanRemoval: true)]
     private Collection $category_article_id;
 
+    #[ORM\ManyToOne(targetEntity: CategoryService::class, inversedBy: 'categoryArticles')]
+#[ORM\JoinColumn(nullable: false)]
+private ?CategoryService $categoryService = null;
+
+
     public function __construct()
     {
         $this->category_article_id = new ArrayCollection();
@@ -74,4 +79,16 @@ class CategoryArticle
 
         return $this;
     }
+
+    public function getCategoryService(): ?CategoryService
+{
+    return $this->categoryService;
+}
+
+public function setCategoryService(?CategoryService $categoryService): self
+{
+    $this->categoryService = $categoryService;
+
+    return $this;
+}
 }

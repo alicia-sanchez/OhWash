@@ -75,8 +75,6 @@ $categoryServiceAmeublement = new CategoryService();
         $manager->persist($categoryServiceAmeublement);
         
 //RETOUCHE
-        
-        
 $categoryServiceRetouche = new CategoryService();
         $categoryServiceRetouche->setName('Retouche');
         $categoryServiceRetouche->setDescription('Ajustements et modifications sur mesure.');
@@ -84,32 +82,48 @@ $categoryServiceRetouche = new CategoryService();
         $manager->persist($categoryServiceRetouche);
 
 
-$categoriesArticles = [
-        'Vêtement d\'extérieur' => ['Veste', 'Imperméable', 'Doudoune', 'Blouson / Parka'],
-        'Tenue de tous les jours' => ['Pull', 'T-shirt', 'Pantalon', 'Jean', 'Jupe', 'Short', 'Robe'],
-        'Vêtement délicats' => ['Chemisier en soie', 'Pantalon en cuir', 'Pull cachemire', 'Robe en cuir', 'Chemisier en dentelle'],
-        'Tenue de soirée' => ['Costume (2 pièces)', 'Costume (3 pièces)', 'Robe de soirée'],
-        'Accessoires' => ['Foulard / Echarpe', 'Cravate / Noeud papillon', 'Chaussettes / Sous-vêtements'],
-        'Linge de maison' => [
-            'Drap - Simple', 'Drap - Double', 'Housse de couette - Simple', 'Housse de couette - Double',
-            'Housse de coussin - Petit', 'Housse de coussin - Moyen', 'Housse de coussin - Grand', "Taie d'oreiller"
-        ],
-        'Bains' => ['Tapis de bain', 'Serviette de bain', 'Serviette de toilette', 'Peignoir de bain'],
-        'Linge de cuisine' => ['Nappe (2m)', 'Nappe (4m)', 'Serviette de table', 'Torchon'],
+        $categoriesArticles = [
+            'Pressing' => [
+                'Vêtement d\'extérieur' => ['Veste', 'Imperméable', 'Doudoune', 'Blouson / Parka'],
+                'Tenue de tous les jours' => ['Pull', 'T-shirt', 'Pantalon', 'Jean', 'Jupe', 'Short', 'Robe'],
+                'Vêtement délicats' => ['Chemisier en soie', 'Pantalon en cuir', 'Pull cachemire', 'Robe en cuir', 'Chemisier en dentelle'],
+                'Tenue de soirée' => ['Costume (2 pièces)', 'Costume (3 pièces)', 'Robe de soirée'],
+                'Accessoires' => ['Foulard / Echarpe', 'Cravate / Noeud papillon', 'Chaussettes / Sous-vêtements'],
+            ],
+            'Blanchisserie' => [
+                'Linge de maison' => ['Drap - Simple', 'Drap - Double', 'Housse de couette - Simple', 'Housse de couette - Double',
+                'Housse de coussin - Petit', 'Housse de coussin - Moyen', 'Housse de coussin - Grand', "Taie d'oreiller"],
+                'Bains' => ['Tapis de bain', 'Serviette de bain', 'Serviette de toilette', 'Peignoir de bain'],
+                'Linge de cuisine' => ['Nappe (2m)', 'Nappe (4m)', 'Serviette de table', 'Torchon'],
+            ],
+            'Ameublement' => [
+                'Rideaux et Voilages' => ['Rideau court', 'Rideau long', 'Voilage'],
+                'Mobilier' => ['Housse de canapé', 'Housse de fauteuil', 'Coussin de chaise'],
+            ],
+            'Retouche' => [
+                'Ajustements' => ['Ourlet de pantalon', 'Rétrécissement de veste', 'Ajustement de robe'],
+                'Réparations' => ['Remplacement de fermeture éclair', 'Rapiéçage', 'Réparation de déchirure'],
+                'Personnalisations' => ['Broderie', 'Ajout de patch', 'Customisation de vêtements'],
+            ]
         ];
 
+        foreach ($categoriesArticles as $serviceNom => $categories) {
+            $categoryService = $manager->getRepository(CategoryService::class)->findOneBy(['name' => $serviceNom]);
 
-        foreach ($categoriesArticles as $categoryName => $articles) {
-            $categoryArticle = new CategoryArticle();
-            $categoryArticle->setName($categoryName);
-            $categoryArticle->setCategoryService($categoryServicePressing); // Associez la catégorie d'articles à la catégorie de service "Pressing"
-            $manager->persist($categoryArticle);
+            foreach ($categories as $categoryName => $articles) {
+                $categoryArticle = new CategoryArticle();
+                $categoryArticle->setName($categoryName);
+                if ($categoryService) {
+                    $categoryArticle->setCategoryService($categoryService);
+                }
+                $manager->persist($categoryArticle);
 
-            foreach ($articles as $articleName) {
-                $article = new Article();
-                $article->setName($articleName);
-                $article->setCategoryArticle($categoryArticle); // Associez l'article à la catégorie d'articles
-                $manager->persist($article);
+                foreach ($articles as $articleName) {
+                    $article = new Article();
+                    $article->setName($articleName);
+                    $article->setCategoryArticle($categoryArticle);
+                    $manager->persist($article);
+                }
             }
         }
 
