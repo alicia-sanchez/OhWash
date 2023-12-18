@@ -21,20 +21,14 @@ class Article
     #[ORM\Column(length: 100)]
     private ?string $name = null;
 
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $description = null;
+    #[ORM\Column(type: 'float')]
+    private $price;
 
-    #[ORM\OneToMany(mappedBy: 'article', targetEntity: Selection::class, orphanRemoval: true)]
-    private Collection $article_id;
-
-    #[ORM\ManyToOne(inversedBy: 'category_article_id')]
+    #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
     private ?CategoryArticle $categoryArticle = null;
 
-    public function __construct()
-    {
-        $this->article_id = new ArrayCollection();
-    }
+   
 
     public function getId(): ?int
     {
@@ -53,45 +47,12 @@ class Article
         return $this;
     }
 
-    public function getDescription(): ?string
-    {
-        return $this->description;
+    public function getPrice(): ?float {
+        return $this->price;
     }
 
-    public function setDescription(string $description): static
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Selection>
-     */
-    public function getArticleId(): Collection
-    {
-        return $this->article_id;
-    }
-
-    public function addArticleId(Selection $articleId): static
-    {
-        if (!$this->article_id->contains($articleId)) {
-            $this->article_id->add($articleId);
-            $articleId->setArticle($this);
-        }
-
-        return $this;
-    }
-
-    public function removeArticleId(Selection $articleId): static
-    {
-        if ($this->article_id->removeElement($articleId)) {
-            // set the owning side to null (unless already changed)
-            if ($articleId->getArticle() === $this) {
-                $articleId->setArticle(null);
-            }
-        }
-
+    public function setPrice(float $price): self {
+        $this->price = $price;
         return $this;
     }
 
@@ -100,7 +61,7 @@ class Article
         return $this->categoryArticle;
     }
 
-    public function setCategoryArticle(?CategoryArticle $categoryArticle): static
+    public function setCategoryArticle(?CategoryArticle $categoryArticle): self
     {
         $this->categoryArticle = $categoryArticle;
 

@@ -21,16 +21,12 @@ class CategoryArticle
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'categoryArticle', targetEntity: Article::class, orphanRemoval: true)]
-    private Collection $category_article_id;
-
-    #[ORM\ManyToOne(targetEntity: CategoryService::class, inversedBy: 'categoryArticles')]
-#[ORM\JoinColumn(nullable: false)]
-private ?CategoryService $categoryService = null;
+    private Collection $articles;
 
 
     public function __construct()
     {
-        $this->category_article_id = new ArrayCollection();
+        $this->articles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -53,42 +49,29 @@ private ?CategoryService $categoryService = null;
     /**
      * @return Collection<int, Article>
      */
-    public function getCategoryArticleId(): Collection
+    public function getArticles(): Collection
     {
-        return $this->category_article_id;
+        return $this->articles;
     }
 
-    public function addCategoryArticleId(Article $categoryArticleId): static
+    public function addArticle(Article $article): self
     {
-        if (!$this->category_article_id->contains($categoryArticleId)) {
-            $this->category_article_id->add($categoryArticleId);
-            $categoryArticleId->setCategoryArticle($this);
+        if (!$this->articles->contains($article)) {
+            $this->articles->add($article);
+            $article->setCategoryArticle($this);
         }
 
         return $this;
     }
 
-    public function removeCategoryArticleId(Article $categoryArticleId): static
+    public function removeArticle(Article $article): self
     {
-        if ($this->category_article_id->removeElement($categoryArticleId)) {
-            // set the owning side to null (unless already changed)
-            if ($categoryArticleId->getCategoryArticle() === $this) {
-                $categoryArticleId->setCategoryArticle(null);
+        if ($this->articles->removeElement($article)) {
+            if ($article->getCategoryArticle() === $this) {
+                $article->setCategoryArticle(null);
             }
         }
 
         return $this;
     }
-
-    public function getCategoryService(): ?CategoryService
-{
-    return $this->categoryService;
-}
-
-public function setCategoryService(?CategoryService $categoryService): self
-{
-    $this->categoryService = $categoryService;
-
-    return $this;
-}
 }

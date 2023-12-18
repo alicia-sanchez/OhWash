@@ -8,38 +8,44 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 #[ORM\Entity(repositoryClass: ServiceRepository::class)]
-#[ApiResource]
+
+#[ApiResource(
+    normalizationContext: ['groups' => ['service:read']],
+    denormalizationContext: ['groups' => ['service:write']]
+)]
 class Service
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['category:read'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
+    #[Groups(['category:read'])]
+    #[ORM\Column(type: 'string')]
     private ?string $name = null;
 
+    #[Groups(['category:read'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    #[ORM\OneToMany(mappedBy: 'service_id', targetEntity: Selection::class, orphanRemoval: true)]
-    private Collection $selection;
-
-    #[ORM\OneToMany(mappedBy: 'service', targetEntity: ServiceHasCategoryService::class, orphanRemoval: true)]
-    private Collection $service_id;
-
-    #[ORM\Column]
-    private ?int $price_id = null;
+    #[ORM\ManyToMany(targetEntity: CategoryService::class, inversedBy: 'services')]
+    #[ORM\JoinTable(name: "category_service_service")]
+    private Collection $categoryServices;
 
     #[ORM\Column]
     private ?int $price = null;
 
+
+
     public function __construct()
     {
-        $this->selection = new ArrayCollection();
-        $this->service_id = new ArrayCollection();
+        $this->categoryServices = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -71,74 +77,27 @@ class Service
         return $this;
     }
 
-    /**
-     * @return Collection<int, Selection>
+
+/**
+     * @return Collection<int, CategoryService>
      */
-    public function getSelection(): Collection
+    public function getCategoryServices(): Collection
     {
-        return $this->selection;
+        return $this->categoryServices;
     }
 
-    public function addSelection(Selection $selection): static
+    public function addCategoryService(CategoryService $categoryService): self
     {
-        if (!$this->selection->contains($selection)) {
-            $this->selection->add($selection);
-            $selection->setServiceId($this);
+        if (!$this->categoryServices->contains($categoryService)) {
+            $this->categoryServices[] = $categoryService;
         }
 
         return $this;
     }
 
-    public function removeSelection(Selection $selection): static
+    public function removeCategoryService(CategoryService $categoryService): self
     {
-        if ($this->selection->removeElement($selection)) {
-            // set the owning side to null (unless already changed)
-            if ($selection->getServiceId() === $this) {
-                $selection->setServiceId(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, ServiceHasCategoryService>
-     */
-    public function getServiceId(): Collection
-    {
-        return $this->service_id;
-    }
-
-    public function addServiceId(ServiceHasCategoryService $serviceId): static
-    {
-        if (!$this->service_id->contains($serviceId)) {
-            $this->service_id->add($serviceId);
-            $serviceId->setService($this);
-        }
-
-        return $this;
-    }
-
-    public function removeServiceId(ServiceHasCategoryService $serviceId): static
-    {
-        if ($this->service_id->removeElement($serviceId)) {
-            // set the owning side to null (unless already changed)
-            if ($serviceId->getService() === $this) {
-                $serviceId->setService(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getPriceId(): ?int
-    {
-        return $this->price_id;
-    }
-
-    public function setPriceId(int $price_id): static
-    {
-        $this->price_id = $price_id;
+        $this->categoryServices->removeElement($categoryService);
 
         return $this;
     }
@@ -154,4 +113,7 @@ class Service
 
         return $this;
     }
+
+
+    
 }

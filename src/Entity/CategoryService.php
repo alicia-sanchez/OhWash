@@ -8,36 +8,39 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 #[ORM\Entity(repositoryClass: CategoryServiceRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['category:read']],
+)]
 class CategoryService
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['category:read'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
+    
+    #[Groups(['category:read'])]
+    #[ORM\Column(type: Types::STRING)]
     private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'categoryservice', targetEntity: ServiceHasCategoryService::class, orphanRemoval: true)]
-    private Collection $category_service_id;
-
+    #[Groups(['category:read'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
+    #[Groups(['category:read'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $Information = null;
 
-    #[ORM\OneToMany(mappedBy: 'CategoryService', targetEntity: CategoryArticle::class, orphanRemoval: true)]
-    private Collection $ategoryService_id;
+    #[Groups(['category:read'])]
+    #[ORM\ManyToMany(targetEntity: Service::class, inversedBy: 'CategoryService', fetch:'EAGER')]
+    private Collection $services;
 
-    public function __construct()
-    {
-        $this->category_service_id = new ArrayCollection();
-        $this->ategoryService_id = new ArrayCollection();
-    }
+
 
     public function getId(): ?int
     {
@@ -52,36 +55,6 @@ class CategoryService
     public function setName(string $name): static
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, ServiceHasCategoryService>
-     */
-    public function getCategoryServiceId(): Collection
-    {
-        return $this->category_service_id;
-    }
-
-    public function addCategoryServiceId(ServiceHasCategoryService $categoryServiceId): static
-    {
-        if (!$this->category_service_id->contains($categoryServiceId)) {
-            $this->category_service_id->add($categoryServiceId);
-            $categoryServiceId->setCategoryservice($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCategoryServiceId(ServiceHasCategoryService $categoryServiceId): static
-    {
-        if ($this->category_service_id->removeElement($categoryServiceId)) {
-            // set the owning side to null (unless already changed)
-            if ($categoryServiceId->getCategoryservice() === $this) {
-                $categoryServiceId->setCategoryservice(null);
-            }
-        }
 
         return $this;
     }
@@ -109,6 +82,37 @@ class CategoryService
 
         return $this;
     }
+    public function __construct()
+{
+    $this->services = new ArrayCollection();
+}
 
-    
+/**
+ * @return Collection|Service[]
+ */
+public function getServices(): Collection
+{
+    return $this->services;
+}
+
+    /**
+     * Obtient l'ID de la catégorie en fonction du nom.
+     *
+     * @param string $name Le nom de la catégorie.
+     * @return int|null L'ID de la catégorie ou null si non trouvé.
+     */
+    public function getIdFromName(string $name): ?int
+    {
+        $categories = [
+            'pressing' => 21,
+            'blanchisserie' => 22,
+            'ameublement' => 23,
+            'retouche' => 24,
+            // Ajoutez les autres catégories au besoin
+        ];
+
+        return $categories[$name] ?? null;
+    }
+
+
 }
