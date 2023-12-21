@@ -20,6 +20,11 @@ class CategoryArticle
     #[ORM\Column(length: 100)]
     private ?string $name = null;
 
+    #[ORM\ManyToMany(targetEntity: CategoryArticle::class, inversedBy: 'services')]
+    #[ORM\JoinTable(name: 'service_category_articles')]
+    private Collection $services;
+
+
     #[ORM\OneToMany(mappedBy: 'categoryArticle', targetEntity: Article::class, orphanRemoval: true)]
     private Collection $articles;
 
@@ -74,4 +79,9 @@ class CategoryArticle
 
         return $this;
     }
+
+    public function getServices(): Collection
+{
+    return $this->services;
+}
 }

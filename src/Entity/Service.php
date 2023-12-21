@@ -33,8 +33,10 @@ class Service
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    #[ORM\ManyToMany(targetEntity: CategoryService::class, inversedBy: 'services')]
-    #[ORM\JoinTable(name: "category_service_service")]
+    #[ORM\ManyToMany(targetEntity: CategoryArticle::class, inversedBy:'services')] 
+    private Collection $categoryArticles;
+
+    #[ORM\ManyToMany(targetEntity: Service::class, inversedBy: 'categoryArticles')]
     private Collection $categoryServices;
 
     #[ORM\Column]
@@ -114,6 +116,9 @@ class Service
         return $this;
     }
 
-
+    public function getCategoriesArticles(): Collection
+    {
+        return $this->categoryArticles;
+    }
     
 }
