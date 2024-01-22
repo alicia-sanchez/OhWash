@@ -7,24 +7,26 @@ use App\Repository\CategoryArticleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CategoryArticleRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['service:read']],
+    denormalizationContext: ['groups' => ['service:write']]
+)]
 class CategoryArticle
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['category:read', 'service:read'])]
     private ?int $id = null;
 
+    #[Groups(['category:read', 'service:read'])]
     #[ORM\Column(length: 100)]
     private ?string $name = null;
 
-    #[ORM\ManyToMany(targetEntity: CategoryArticle::class, inversedBy: 'services')]
-    #[ORM\JoinTable(name: 'service_category_articles')]
-    private Collection $services;
-
-
+    #[Groups(['category:read', 'service:read'])]
     #[ORM\OneToMany(mappedBy: 'categoryArticle', targetEntity: Article::class, orphanRemoval: true)]
     private Collection $articles;
 
@@ -80,8 +82,5 @@ class CategoryArticle
         return $this;
     }
 
-    public function getServices(): Collection
-{
-    return $this->services;
-}
+
 }

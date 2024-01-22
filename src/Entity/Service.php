@@ -6,49 +6,59 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ServiceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 
 #[ORM\Entity(repositoryClass: ServiceRepository::class)]
-
 #[ApiResource(
     normalizationContext: ['groups' => ['service:read']],
     denormalizationContext: ['groups' => ['service:write']]
 )]
+
+
+
 class Service
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['category:read'])]
+    #[Groups(['category:read', 'service:read', 'category-article:read'])]
     private ?int $id = null;
 
-    #[Groups(['category:read'])]
+    #[Groups(['category:read', 'service:read'])]
     #[ORM\Column(type: 'string')]
     private ?string $name = null;
 
-    #[Groups(['category:read'])]
-    #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['category:read', 'service:read'])]
+    #[ORM\Column(type: 'text')]
     private ?string $description = null;
 
-    #[ORM\ManyToMany(targetEntity: CategoryArticle::class, inversedBy:'services')] 
-    private Collection $categoryArticles;
 
-    #[ORM\ManyToMany(targetEntity: Service::class, inversedBy: 'categoryArticles')]
-    private Collection $categoryServices;
-
+    
+    #[Groups(['category:read', 'service:read'])]
     #[ORM\Column]
     private ?int $price = null;
+
+    #[Groups(['category:read', 'service:read'])]
+    #[ORM\ManyToMany(targetEntity: CategoryArticle::class, inversedBy: 'services')]
+    private Collection $categoryArticles;
+
+    #[Groups(['category:read', 'service:read'])]
+    #[ORM\ManyToMany(targetEntity: CategoryService::class, inversedBy: 'services')]
+    private Collection $category_service;
+    
+    
 
 
 
     public function __construct()
     {
-        $this->categoryServices = new ArrayCollection();
-
+        $this->categoryArticles = new ArrayCollection();
+        $this->category_service = new ArrayCollection();
     }
+
+
 
     public function getId(): ?int
     {
@@ -80,29 +90,8 @@ class Service
     }
 
 
-/**
-     * @return Collection<int, CategoryService>
-     */
-    public function getCategoryServices(): Collection
-    {
-        return $this->categoryServices;
-    }
 
-    public function addCategoryService(CategoryService $categoryService): self
-    {
-        if (!$this->categoryServices->contains($categoryService)) {
-            $this->categoryServices[] = $categoryService;
-        }
 
-        return $this;
-    }
-
-    public function removeCategoryService(CategoryService $categoryService): self
-    {
-        $this->categoryServices->removeElement($categoryService);
-
-        return $this;
-    }
 
     public function getPrice(): ?int
     {
@@ -116,9 +105,52 @@ class Service
         return $this;
     }
 
-    public function getCategoriesArticles(): Collection
+    public function getCategoryArticles(): Collection
     {
         return $this->categoryArticles;
     }
+
+    public function addCategoryArticle(CategoryArticle $categoryArticle): self
+    {
+        if (!$this->categoryArticles->contains($categoryArticle)) {
+            $this->categoryArticles[] = $categoryArticle;
+        }
+
+        return $this;
+    }
+
+    public function removeCategoryArticle(CategoryArticle $categoryArticle): self
+    {
+        $this->categoryArticles->removeElement($categoryArticle);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CategoryService>
+     */
+    public function getCategoryService(): Collection
+    {
+        return $this->category_service;
+    }
+
+    public function addCategoryService(CategoryService $categoryService): static
+    {
+        if (!$this->category_service->contains($categoryService)) {
+            $this->category_service->add($categoryService);
+        }
+
+        return $this;
+    }
+
+    public function removeCategoryService(CategoryService $categoryService): static
+    {
+        $this->category_service->removeElement($categoryService);
+
+        return $this;
+    }
+
+
     
 }
+

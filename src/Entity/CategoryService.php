@@ -22,26 +22,32 @@ class CategoryService
     #[ORM\Column]
     #[Groups(['category:read'])]
     private ?int $id = null;
+        
+    #[Groups(['category:read'])]
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $description = null;
+    
+    #[Groups(['category:read'])]
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $Information = null;
+    
 
+    
     
     #[Groups(['category:read'])]
     #[ORM\Column(type: Types::STRING)]
     private ?string $name = null;
 
     #[Groups(['category:read'])]
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $description = null;
-
-    #[Groups(['category:read'])]
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $Information = null;
-
-    #[Groups(['category:read'])]
-    #[ORM\ManyToMany(targetEntity: Service::class, inversedBy: 'CategoryService', fetch:'EAGER')]
+    #[ORM\ManyToMany(targetEntity: Service::class, mappedBy: 'category_service')]
     private Collection $services;
 
-
-
+    public function __construct()
+    {
+        $this->services = new ArrayCollection();
+    }
+    
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -82,36 +88,32 @@ class CategoryService
 
         return $this;
     }
-    public function __construct()
-{
-    $this->services = new ArrayCollection();
-}
-
-/**
- * @return Collection|Service[]
- */
-public function getServices(): Collection
-{
-    return $this->services;
-}
 
     /**
-     * Obtient l'ID de la catégorie en fonction du nom.
-     *
-     * @param string $name Le nom de la catégorie.
-     * @return int|null L'ID de la catégorie ou null si non trouvé.
+     * @return Collection<int, Service>
      */
-    public function getIdFromName(string $name): ?int
+    public function getServices(): Collection
     {
-        $categories = [
-            'pressing' => 21,
-            'blanchisserie' => 22,
-            'ameublement' => 23,
-            'retouche' => 24,
-            // Ajoutez les autres catégories au besoin
-        ];
+        return $this->services;
+    }
 
-        return $categories[$name] ?? null;
+    public function addService(Service $service): static
+    {
+        if (!$this->services->contains($service)) {
+            $this->services->add($service);
+            $service->addCategoryService($this);
+        }
+
+        return $this;
+    }
+
+    public function removeService(Service $service): static
+    {
+        if ($this->services->removeElement($service)) {
+            $service->removeCategoryService($this);
+        }
+
+        return $this;
     }
 
 

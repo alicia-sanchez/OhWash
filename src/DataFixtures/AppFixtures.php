@@ -48,85 +48,95 @@ class AppFixtures extends Fixture
             'name' => 'Nettoyage à sec',
             'description' => 'Nettoyage doux sans produits chimiques agressifs, préservant la qualité de vos tissus et de l\'environnement.',
             'price' => 6,
-            'category' => 'pressing'
+            'category' => 'pressing',
+            'category_article' => ['vetement_exterieur', 'tenue_quotidien', 'vetement_delicat', 'tenue_soiree', 'rideaux_voilages']
         ],
         'nettoyage de tissus délicats' => [
             'name' => 'Nettoyage de tissus délicats',
             'description' => 'Nettoyage doux sans produits chimiques agressifs, préservant la qualité de vos tissus et de l\'environnement.',
             'price' => 8,
-            'category' => 'pressing'
+            'category' => 'pressing',
+            'category_article' => ['vetement_delicat', 'tenue_soiree', 'rideaux_voilages','linge_maison']
         ],
         'repassage' => [
             'name' => 'Repassage',
             'description' => 'description à venir.',
             'price' => 7,
-            'category' => 'pressing'
+            'category' => 'pressing',
+            'category_article' => ['tenue_quotidien', 'vetement_delicat', 'tenue_soiree', 'rideaux_voilages','linge_maison','bains' ]
         ],
         'lavage de linge de maison' => [
             'name' => 'Lavage de linge de maison',
             'description' => 'Fraîcheur et propreté écologique pour tous vos textiles de maison.',
             'price' => 10,
-            'category' => 'blanchisserie'
+            'category' => 'blanchisserie',
+            'category_article' => ['linge_maison','bains', 'linge_cuisine', 'rideaux_voilages', 'mobilier']
         ],
         'traitement anti-tâche et désinfection' => [
             'name' => 'Traitement anti-tâche et désinfection',
             'description' => 'Élimination des taches tenaces et désinfection pour une propreté impeccable.',
             'price' => 8,
-            'category' => 'blanchisserie'
+            'category' => 'blanchisserie',
+            'category_article' => ['linge_maison','bains', 'linge_cuisine', 'rideaux_voilages', 'mobilier']
         ],
         'lavage et pliage de linge au kilo' => [
             'name' => 'Lavage et pliage de linge au kilo',
             'description' => 'Utilisation d\'eau recyclée et de détergents écologiques pour nettoyer votre linge de manière durable.',
             'price' => 12,
-            'category' => 'blanchisserie'
+            'category' => 'blanchisserie',
+            'category_article' => ['vetement_exterieur', 'tenue_quotidien', 'vetement_delicat', 'tenue_soiree','linge_maison','bains' ]
         ],
         'nettoyage rideaux et voilages' => [
             'name' => 'Nettoyage rideaux et voilages',
             'description' => 'Soin délicat pour éliminer la poussière et les odeurs, tout en préservant la qualité des tissus.',
             'price' => 10,
-            'category' => 'ameublement'
+            'category' => 'ameublement',
+            'category_article' => ['rideaux_voilages']
         ],
         'nettoyage de tapis et moquettes' => [
             'name' => 'Nettoyage de tapis et moquettes',
             'description' => 'Un service de nettoyage en profondeur qui utilise des composés entièrement naturels.',
             'price' => 20,
-            'category' => 'ameublement'
+            'category' => 'ameublement',
+            'category_article' => ['mobilier']
         ],
         'aujustement de taille pour vêtements' => [
             'name' => 'Aujustement de taille pour vêtements',
             'description' => 'Modification précise de vos vêtements pour un ajustement parfait à votre silhouette.',
             'price' => 8,
-            'category' => 'retouche'
+            'category' => 'retouche',
+            'category_article' => ['vetement_exterieur', 'tenue_quotidien', 'vetement_delicat', 'tenue_soiree', 'ajustements']
         ],
         'réparation de déchirures et remplacement de fermetures éclairs' => [
             'name' => 'Réparation de déchirures et remplacement de fermetures éclairs',
             'description' => 'Chaque intervention vise à prolonger la durée de vie de vos pièces avec des matériaux recyclés ou réutilisés.',
             'price' => 8,
-            'category' => 'retouche'
+            'category' => 'retouche',
+            'category_article' => ['vetement_exterieur', 'tenue_quotidien', 'vetement_delicat', 'tenue_soiree', 'linge_maison', 'rideaux_voilages', 'ajustements', 'reparations' ]
         ],
         'customisation et modification pour vêtements' => [
             'name' => 'Customisation et modification pour vêtements',
             'description' => 'Personnalisation créative pour renouveler et adapter vos pièces à votre style unique.',
             'price' => 12,
-            'category' => 'retouche'
+            'category' => 'retouche',
+            'category_article' => ['vetement_exterieur', 'tenue_quotidien', 'vetement_delicat', 'tenue_soiree', 'rideaux_voilages', 'ajustements', 'reparations','personnalisations' ],
         ],
     ];
 
     private const CATEGORIES_ARTICLES = [
-        'vetement_exterieur' => 'Vêtement d\'extérieur',
-        'tenue_quotidien' => 'Tenue de tous les jours',
-        'vetement_delicat' => 'Vêtement délicats',
-        'tenue_soiree' => 'Tenue de soirée',
-        'accessoires' => 'Accessoires',
+        'vetement_exterieur' => 'Vêtement extérieur',
+        'tenue_quotidien' => 'Tenue quotidienne',
+        'vetement_delicat' => 'Vêtement délicat',
+        'tenue_soiree' => 'Tenue soirée',
+        'rideaux_voilages' => 'Rideaux et voilages',
         'linge_maison' => 'Linge de maison',
         'bains' => 'Bains',
-        'linge_cuisine' => 'Linge de cuisine',
-        'rideaux_voilages' => 'Rideaux et Voilages',
         'mobilier' => 'Mobilier',
         'ajustements' => 'Ajustements',
         'reparations' => 'Réparations',
         'personnalisations' => 'Personnalisations',
     ];
+    
 
     private const ARTICLES = [
         'veste' => [
@@ -400,12 +410,41 @@ class AppFixtures extends Fixture
             'price' => 12,
         ],
     ];
-
-
+    
+    
     public function load(ObjectManager $manager): void
     {
-
+        
         $faker = Factory::create('fr_FR');
+        
+
+
+        //Création des catégories d'articles 
+        $categoryArticles = [];
+        foreach (self::CATEGORIES_ARTICLES as $key => $categoryName) {
+            $categoryArticle = new CategoryArticle();
+            $categoryArticle->setName($categoryName);
+            $manager->persist($categoryArticle);
+        
+            $categoryArticles[$key] = $categoryArticle;
+        }
+        
+// Création des articles
+foreach (self::ARTICLES as $key => $value) {
+    $article = new Article();
+    $article
+        ->setName($value['name'])
+        ->setPrice($value['price']);
+
+    $categoryArticleKey = $value['categoryArticle'];
+
+    if (isset($categoryArticles[$categoryArticleKey])) {
+        $article->setCategoryArticle($categoryArticles[$categoryArticleKey]);
+    }
+
+    $manager->persist($article);
+}
+$manager->flush();
 
 // Création des Catégories de Services
 $categoryServices = []; 
@@ -422,54 +461,55 @@ foreach (self::CATEGORIES_SERVICES as $key => $value) {
 // Assurez-vous de flush avant de créer les services pour obtenir les IDs générés pour les catégories
 $manager->flush();
 
-// Création des Services
-foreach (self::SERVICES as $key => $value) {
+
+// ...
+
+foreach (self::SERVICES as $serviceName => $serviceData) {
+    // Créez une instance de Service
     $service = new Service();
-    $service
-        ->setName($value['name'])
-        ->setDescription($value['description'])
-        ->setPrice($value['price']);
 
-    // Vérifier et lier la catégorie de service
-    $categoryId = $categoryServices[$value['category']]->getId();
-    $category = $manager->getRepository(CategoryService::class)->find($categoryId);
+    // Vérifiez si la clé 'name' est présente dans $serviceData
+    if (isset($serviceData['name'])) {
+        // Attribuez la valeur à la propriété 'name' de l'entité Service
+        $service->setName($serviceData['name']);
 
-    if ($category) {
-        $service->addCategoryService($category);
+        // ... (autres propriétés du service)
+
+        // Vérifiez si la clé 'category_article' est présente dans $serviceData
+        if (isset($serviceData['category_article'])) {
+            // Parcourez les catégories d'articles et ajoutez-les au service
+            foreach ($serviceData['category_article'] as $categoryArticleName) {
+                // Vérifiez si la catégorie d'article existe
+                if (array_key_exists($categoryArticleName, self::CATEGORIES_ARTICLES)) {
+                    // Récupérez l'instance de CategoryArticle à partir du tableau $categoryArticles
+                    $categoryArticle = $categoryArticles[$categoryArticleName];
+
+                    // Associez la catégorie d'article au service
+                    $service->addCategoryArticle($categoryArticle);
+                } else {
+                    // Gérez le cas où la catégorie d'article n'est pas trouvée
+                    trigger_error("Category Article not found: $categoryArticleName", E_USER_WARNING);
+                }
+            }
+        }
+
+        // Persistez le service
+        $manager->persist($service);
+    } else {
+        // Gérez le cas où la clé 'name' n'est pas trouvée
+        trigger_error("Invalid 'name' data for service: $serviceName", E_USER_WARNING);
     }
-
-    $manager->persist($service);
-    $services[$key] = $service;
 }
 
-// Assurez-vous de flush après la création des services
-$manager->flush();
 
-//Création des catégories d'articles 
-$categoryArticles = [];
-foreach (self::CATEGORIES_ARTICLES as $key => $categoryName) {
-    $categoryArticle = new CategoryArticle();
-    $categoryArticle->setName($categoryName);
-    $manager->persist($categoryArticle);
 
-    $categoryArticles[$key] = $categoryArticle;
-}
 
-//Création des articles
-foreach (self::ARTICLES as $key => $value) {
-    $article = new Article();
-    $article
-        ->setName($value['name'])
-        ->setPrice($value['price'])
-        ->setCategoryArticle($categoryArticles[$value['categoryArticle']]);
 
-    if (isset($categoryArticles[$value['categoryArticle']])) {
-        $article->setCategoryArticle($categoryArticles[$value['categoryArticle']]);
-    }
 
-    $manager->persist($article);
-}
- 
+
+
+
+
 
 //Création d'utilisateurs
         for ($i = 0; $i < 5; $i++) {
