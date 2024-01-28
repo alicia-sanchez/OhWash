@@ -30,10 +30,19 @@ class CategoryArticle
     #[ORM\OneToMany(mappedBy: 'categoryArticle', targetEntity: Article::class, orphanRemoval: true)]
     private Collection $articles;
 
+    #[ORM\ManyToMany(targetEntity: Service::class, mappedBy: 'categoryarticle')]
+    private Collection $services;
+
+
+
+    
+
 
     public function __construct()
     {
         $this->articles = new ArrayCollection();
+        $this->services = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -82,5 +91,33 @@ class CategoryArticle
         return $this;
     }
 
+    /**
+     * @return Collection<int, Service>
+     */
+    public function getServices(): Collection
+    {
+        return $this->services;
+    }
+
+    public function addService(Service $service): static
+    {
+        if (!$this->services->contains($service)) {
+            $this->services->add($service);
+            $service->addCategoryarticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeService(Service $service): static
+    {
+        if ($this->services->removeElement($service)) {
+            $service->removeCategoryarticle($this);
+        }
+
+        return $this;
+    }
+
+    
 
 }

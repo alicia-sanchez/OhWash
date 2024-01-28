@@ -34,19 +34,17 @@ class Service
     #[ORM\Column(type: 'text')]
     private ?string $description = null;
 
-
-    
     #[Groups(['category:read', 'service:read'])]
     #[ORM\Column]
     private ?int $price = null;
 
     #[Groups(['category:read', 'service:read'])]
-    #[ORM\ManyToMany(targetEntity: CategoryArticle::class, inversedBy: 'services')]
-    private Collection $categoryArticles;
-
-    #[Groups(['category:read', 'service:read'])]
     #[ORM\ManyToMany(targetEntity: CategoryService::class, inversedBy: 'services')]
     private Collection $category_service;
+
+    #[ORM\ManyToMany(targetEntity: CategoryArticle::class, inversedBy: 'services')]
+    private Collection $categoryarticle;
+    
     
     
 
@@ -54,8 +52,9 @@ class Service
 
     public function __construct()
     {
-        $this->categoryArticles = new ArrayCollection();
         $this->category_service = new ArrayCollection();
+        $this->categoryarticle = new ArrayCollection();
+
     }
 
 
@@ -105,26 +104,7 @@ class Service
         return $this;
     }
 
-    public function getCategoryArticles(): Collection
-    {
-        return $this->categoryArticles;
-    }
 
-    public function addCategoryArticle(CategoryArticle $categoryArticle): self
-    {
-        if (!$this->categoryArticles->contains($categoryArticle)) {
-            $this->categoryArticles[] = $categoryArticle;
-        }
-
-        return $this;
-    }
-
-    public function removeCategoryArticle(CategoryArticle $categoryArticle): self
-    {
-        $this->categoryArticles->removeElement($categoryArticle);
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, CategoryService>
@@ -146,6 +126,31 @@ class Service
     public function removeCategoryService(CategoryService $categoryService): static
     {
         $this->category_service->removeElement($categoryService);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CategoryArticle>
+     */
+    public function getCategoryarticle(): Collection
+    {
+        return $this->categoryarticle;
+    }
+
+    public function addCategoryarticle(CategoryArticle $categoryarticle): static
+    {
+        if (!$this->categoryarticle->contains($categoryarticle)) {
+            $this->categoryarticle[] = $categoryarticle;
+            $categoryarticle->addService($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCategoryarticle(CategoryArticle $categoryarticle): static
+    {
+        $this->categoryarticle->removeElement($categoryarticle);
 
         return $this;
     }

@@ -135,6 +135,7 @@ class AppFixtures extends Fixture
         'ajustements' => 'Ajustements',
         'reparations' => 'Réparations',
         'personnalisations' => 'Personnalisations',
+        'linge_cuisine' => 'Linge de cuisine',
     ];
     
 
@@ -419,15 +420,40 @@ class AppFixtures extends Fixture
         
 
 
-        //Création des catégories d'articles 
-        $categoryArticles = [];
-        foreach (self::CATEGORIES_ARTICLES as $key => $categoryName) {
-            $categoryArticle = new CategoryArticle();
-            $categoryArticle->setName($categoryName);
-            $manager->persist($categoryArticle);
+// Création des catégories d'articles 
+$categoryArticles = [];
+foreach (self::CATEGORIES_ARTICLES as $key => $categoryName) {
+    $categoryArticle = new CategoryArticle();
+    $categoryArticle->setName($categoryName);
+    $manager->persist($categoryArticle);
+    
+    $categoryArticles[$key] = $categoryArticle;
+}
+
+foreach (self::SERVICES as $key => $serviceData) {
+    $service = new Service();
+    $service->setName($serviceData['name']);
+    $service->setDescription($serviceData['description']);
+    $service->setPrice($serviceData['price']);
+
+    // Associer les catégories d'articles avec le service
+    foreach ($serviceData['category_article'] as $categoryArticleKey) {
+        // Récupérer l'objet CategoryArticle correspondant à la clé
+        $categoryArticle = $categoryArticles[$categoryArticleKey];
         
-            $categoryArticles[$key] = $categoryArticle;
-        }
+        // Ajouter le CategoryArticle au service en utilisant la nouvelle méthode
+        $service->addCategoryArticle($categoryArticle);
+    }
+
+    $services[$key] = $service;
+
+    $manager->persist($service);
+}
+
+
+
+
+
         
 // Création des articles
 foreach (self::ARTICLES as $key => $value) {
@@ -460,56 +486,6 @@ foreach (self::CATEGORIES_SERVICES as $key => $value) {
 
 // Assurez-vous de flush avant de créer les services pour obtenir les IDs générés pour les catégories
 $manager->flush();
-
-
-// ...
-
-foreach (self::SERVICES as $serviceName => $serviceData) {
-    // Créez une instance de Service
-    $service = new Service();
-
-    // Vérifiez si la clé 'name' est présente dans $serviceData
-    if (isset($serviceData['name'])) {
-        // Attribuez la valeur à la propriété 'name' de l'entité Service
-        $service->setName($serviceData['name']);
-
-        // ... (autres propriétés du service)
-
-        // Vérifiez si la clé 'category_article' est présente dans $serviceData
-        if (isset($serviceData['category_article'])) {
-            // Parcourez les catégories d'articles et ajoutez-les au service
-            foreach ($serviceData['category_article'] as $categoryArticleName) {
-                // Vérifiez si la catégorie d'article existe
-                if (array_key_exists($categoryArticleName, self::CATEGORIES_ARTICLES)) {
-                    // Récupérez l'instance de CategoryArticle à partir du tableau $categoryArticles
-                    $categoryArticle = $categoryArticles[$categoryArticleName];
-
-                    // Associez la catégorie d'article au service
-                    $service->addCategoryArticle($categoryArticle);
-                } else {
-                    // Gérez le cas où la catégorie d'article n'est pas trouvée
-                    trigger_error("Category Article not found: $categoryArticleName", E_USER_WARNING);
-                }
-            }
-        }
-
-        // Persistez le service
-        $manager->persist($service);
-    } else {
-        // Gérez le cas où la clé 'name' n'est pas trouvée
-        trigger_error("Invalid 'name' data for service: $serviceName", E_USER_WARNING);
-    }
-}
-
-
-
-
-
-
-
-
-
-
 
 //Création d'utilisateurs
         for ($i = 0; $i < 5; $i++) {
