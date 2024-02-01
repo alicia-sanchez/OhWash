@@ -7,42 +7,28 @@ use App\Repository\CategoryArticleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CategoryArticleRepository::class)]
-#[ApiResource(
-    normalizationContext: ['groups' => ['service:read']],
-    denormalizationContext: ['groups' => ['service:write']]
-)]
+#[ApiResource]
 class CategoryArticle
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['category:read', 'service:read'])]
     private ?int $id = null;
 
-    #[Groups(['category:read', 'service:read'])]
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 100, nullable: true)]
     private ?string $name = null;
 
-    #[Groups(['category:read', 'service:read'])]
-    #[ORM\OneToMany(mappedBy: 'categoryArticle', targetEntity: Article::class, orphanRemoval: true)]
-    private Collection $articles;
+    #[ORM\ManyToOne(inversedBy: 'service')]
+    private ?Article $articles = null;
 
-    #[ORM\ManyToMany(targetEntity: Service::class, mappedBy: 'categoryarticle')]
+    #[ORM\ManyToMany(targetEntity: Service::class, inversedBy: 'categoryArticle')]
     private Collection $services;
-
-
-
-    
-
 
     public function __construct()
     {
-        $this->articles = new ArrayCollection();
         $this->services = new ArrayCollection();
-
     }
 
     public function getId(): ?int
@@ -55,38 +41,21 @@ class CategoryArticle
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(?string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, Article>
-     */
-    public function getArticles(): Collection
+    public function getArticles(): ?Article
     {
         return $this->articles;
     }
 
-    public function addArticle(Article $article): self
+    public function setArticles(?Article $articles): static
     {
-        if (!$this->articles->contains($article)) {
-            $this->articles->add($article);
-            $article->setCategoryArticle($this);
-        }
-
-        return $this;
-    }
-
-    public function removeArticle(Article $article): self
-    {
-        if ($this->articles->removeElement($article)) {
-            if ($article->getCategoryArticle() === $this) {
-                $article->setCategoryArticle(null);
-            }
-        }
+        $this->articles = $articles;
 
         return $this;
     }
@@ -103,7 +72,7 @@ class CategoryArticle
     {
         if (!$this->services->contains($service)) {
             $this->services->add($service);
-            $service->addCategoryarticle($this);
+            $service->addCategoryArticle($this);
         }
 
         return $this;
@@ -111,13 +80,9 @@ class CategoryArticle
 
     public function removeService(Service $service): static
     {
-        if ($this->services->removeElement($service)) {
-            $service->removeCategoryarticle($this);
-        }
+        $this->services->removeElement($service);
+        $service->removeCategoryArticle($this);
 
         return $this;
     }
-
-    
-
 }

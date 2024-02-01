@@ -25,8 +25,16 @@ class Article
     private $price;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?CategoryArticle $categoryArticle = null;
+
+    #[ORM\OneToMany(mappedBy: 'articles', targetEntity: CategoryArticle::class)]
+    private Collection $services;
+
+    public function __construct()
+    {
+        $this->services = new ArrayCollection();
+    }
 
    
 
@@ -64,6 +72,36 @@ class Article
     public function setCategoryArticle(?CategoryArticle $categoryArticle): self
     {
         $this->categoryArticle = $categoryArticle;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CategoryArticleV2>
+     */
+    public function getServices(): Collection
+    {
+        return $this->services;
+    }
+
+    public function addService(CategoryArticle $service): static
+    {
+        if (!$this->services->contains($service)) {
+            $this->services->add($service);
+            $service->setArticles($this);
+        }
+
+        return $this;
+    }
+
+    public function removeService(CategoryArticle $service): static
+    {
+        if ($this->services->removeElement($service)) {
+            // set the owning side to null (unless already changed)
+            if ($service->getArticles() === $this) {
+                $service->setArticles(null);
+            }
+        }
 
         return $this;
     }

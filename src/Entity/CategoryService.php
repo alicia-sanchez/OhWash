@@ -42,9 +42,12 @@ class CategoryService
     #[ORM\ManyToMany(targetEntity: Service::class, mappedBy: 'category_service')]
     private Collection $services;
 
+
+
     public function __construct()
     {
         $this->services = new ArrayCollection();
+
     }
     
     
@@ -115,6 +118,8 @@ class CategoryService
 
         return $this;
     }
+
+
 
 
 }

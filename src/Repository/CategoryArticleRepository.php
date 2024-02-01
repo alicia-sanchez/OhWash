@@ -7,12 +7,12 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<CategoryArticle>
+ * @extends ServiceEntityRepository<CategoryArticleV2>
  *
- * @method CategoryArticle|null find($id, $lockMode = null, $lockVersion = null)
- * @method CategoryArticle|null findOneBy(array $criteria, array $orderBy = null)
- * @method CategoryArticle[]    findAll()
- * @method CategoryArticle[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method CategoryArticleV2|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CategoryArticleV2|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CategoryArticleV2[]    findAll()
+ * @method CategoryArticleV2[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class CategoryArticleRepository extends ServiceEntityRepository
 {
@@ -22,7 +22,7 @@ class CategoryArticleRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return CategoryArticle[] Returns an array of CategoryArticle objects
+//     * @return CategoryArticleV2[] Returns an array of CategoryArticleV2 objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -36,7 +36,7 @@ class CategoryArticleRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?CategoryArticle
+//    public function findOneBySomeField($value): ?CategoryArticleV2
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')

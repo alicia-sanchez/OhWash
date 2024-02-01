@@ -9,55 +9,45 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-
 #[ORM\Entity(repositoryClass: ServiceRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['service:read']],
-    denormalizationContext: ['groups' => ['service:write']]
+    normalizationContext: ['groups' => ['category:read']],
 )]
-
-
-
 class Service
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['category:read', 'service:read', 'category-article:read'])]
+    #[Groups(['category:read'])]
     private ?int $id = null;
 
-    #[Groups(['category:read', 'service:read'])]
-    #[ORM\Column(type: 'string')]
+    #[Groups(['category:read'])]
+    #[ORM\Column(length: 100, nullable: true)]
     private ?string $name = null;
 
-    #[Groups(['category:read', 'service:read'])]
-    #[ORM\Column(type: 'text')]
+    #[Groups(['category:read'])]
+    #[ORM\Column(length: 150, nullable: true)]
     private ?string $description = null;
 
-    #[Groups(['category:read', 'service:read'])]
-    #[ORM\Column]
+    #[Groups(['category:read'])]
+    #[ORM\Column(nullable: true)]
     private ?int $price = null;
 
-    #[Groups(['category:read', 'service:read'])]
+    #[Groups(['category:read'])]
     #[ORM\ManyToMany(targetEntity: CategoryService::class, inversedBy: 'services')]
     private Collection $category_service;
 
+    #[Groups(['category:read'])]
     #[ORM\ManyToMany(targetEntity: CategoryArticle::class, inversedBy: 'services')]
-    private Collection $categoryarticle;
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Collection $category_article = null;
     
-    
-    
-
-
 
     public function __construct()
     {
         $this->category_service = new ArrayCollection();
-        $this->categoryarticle = new ArrayCollection();
-
+        $this->category_article = new ArrayCollection();
     }
-
-
 
     public function getId(): ?int
     {
@@ -69,7 +59,7 @@ class Service
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(?string $name): static
     {
         $this->name = $name;
 
@@ -81,30 +71,24 @@ class Service
         return $this->description;
     }
 
-    public function setDescription(string $description): static
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-
-
-
-
     public function getPrice(): ?int
     {
         return $this->price;
     }
 
-    public function setPrice(int $price): static
+    public function setPrice(?int $price): static
     {
         $this->price = $price;
 
         return $this;
     }
-
-
 
     /**
      * @return Collection<int, CategoryService>
@@ -114,7 +98,8 @@ class Service
         return $this->category_service;
     }
 
-    public function addCategoryService(CategoryService $categoryService): static
+    // Méthode pour ajouter une catégorie de service
+    public function addCategoryService(CategoryService $categoryService): self
     {
         if (!$this->category_service->contains($categoryService)) {
             $this->category_service->add($categoryService);
@@ -123,7 +108,8 @@ class Service
         return $this;
     }
 
-    public function removeCategoryService(CategoryService $categoryService): static
+    // Méthode pour supprimer une catégorie de service
+    public function removeCategoryService(CategoryService $categoryService): self
     {
         $this->category_service->removeElement($categoryService);
 
@@ -133,29 +119,32 @@ class Service
     /**
      * @return Collection<int, CategoryArticle>
      */
-    public function getCategoryarticle(): Collection
+    public function getCategoryArticle(): Collection
     {
-        return $this->categoryarticle;
+        return $this->category_article;
     }
 
-    public function addCategoryarticle(CategoryArticle $categoryarticle): static
+    public function addCategoryArticle(CategoryArticle $categoryArticle): self
     {
-        if (!$this->categoryarticle->contains($categoryarticle)) {
-            $this->categoryarticle[] = $categoryarticle;
-            $categoryarticle->addService($this);
+        if ($this->category_article === null) {
+            $this->category_article = new ArrayCollection();
         }
-
-        return $this;
-    }
-
-    public function removeCategoryarticle(CategoryArticle $categoryarticle): static
-    {
-        $this->categoryarticle->removeElement($categoryarticle);
-
-        return $this;
-    }
-
-
     
-}
+        if (!$this->category_article->contains($categoryArticle)) {
+            $this->category_article->add($categoryArticle);
+            $categoryArticle->addService($this); // Assurez-vous d'ajouter cette ligne
+        }
+    
+        return $this;
+    }
+    
+    
+    
 
+    public function removeCategoryArticle(CategoryArticle $categoryArticle): static
+    {
+        $this->category_article->removeElement($categoryArticle);
+
+        return $this;
+    }
+}
