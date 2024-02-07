@@ -6,7 +6,6 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
@@ -15,28 +14,22 @@ class Article
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 100, nullable: true)]
     private ?string $name = null;
 
-    #[ORM\Column(type: 'float')]
-    private $price;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $price = null;
 
-    #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?CategoryArticle $categoryArticle = null;
-
-    #[ORM\OneToMany(mappedBy: 'articles', targetEntity: CategoryArticle::class)]
-    private Collection $services;
+    #[ORM\ManyToMany(targetEntity: CategoryArticle::class, mappedBy: 'articles')]
+    private Collection $categoryArticles;
 
     public function __construct()
     {
-        $this->services = new ArrayCollection();
+        $this->categoryArticles = new ArrayCollection();
     }
-
-   
 
     public function getId(): ?int
     {
@@ -48,59 +41,47 @@ class Article
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function getPrice(): ?float {
+    public function getPrice(): ?int
+    {
         return $this->price;
     }
 
-    public function setPrice(float $price): self {
+    public function setPrice(?int $price): self
+    {
         $this->price = $price;
-        return $this;
-    }
-
-    public function getCategoryArticle(): ?CategoryArticle
-    {
-        return $this->categoryArticle;
-    }
-
-    public function setCategoryArticle(?CategoryArticle $categoryArticle): self
-    {
-        $this->categoryArticle = $categoryArticle;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, CategoryArticleV2>
+     * @return Collection<int, CategoryArticle>
      */
-    public function getServices(): Collection
+    public function getCategoryArticles(): Collection
     {
-        return $this->services;
+        return $this->categoryArticles;
     }
 
-    public function addService(CategoryArticle $service): static
+    public function addCategoryArticle(CategoryArticle $categoryArticle): self
     {
-        if (!$this->services->contains($service)) {
-            $this->services->add($service);
-            $service->setArticles($this);
+        if (!$this->categoryArticles->contains($categoryArticle)) {
+            $this->categoryArticles[] = $categoryArticle;
+            $categoryArticle->addArticle($this);
         }
 
         return $this;
     }
 
-    public function removeService(CategoryArticle $service): static
+    public function removeCategoryArticle(CategoryArticle $categoryArticle): self
     {
-        if ($this->services->removeElement($service)) {
-            // set the owning side to null (unless already changed)
-            if ($service->getArticles() === $this) {
-                $service->setArticles(null);
-            }
+        if ($this->categoryArticles->removeElement($categoryArticle)) {
+            $categoryArticle->removeArticle($this);
         }
 
         return $this;

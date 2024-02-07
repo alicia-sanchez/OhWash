@@ -22,9 +22,6 @@ class Selection
     #[ORM\JoinColumn(nullable: false)]
     private ?Service $service_id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'article_id')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Article $article_id = null;
 
     #[ORM\OneToMany(mappedBy: 'selection', targetEntity: Basket::class, orphanRemoval: true)]
     private Collection $selection_id;
@@ -52,17 +49,6 @@ class Selection
         return $this;
     }
 
-    public function getArticle(): ?Article
-    {
-        return $this->article_id;
-    }
-
-    public function setArticle(?Article $article_id): static
-    {
-        $this->article_id = $article_id;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Basket>

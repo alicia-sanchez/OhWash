@@ -494,6 +494,7 @@ $manager->flush();
 
 
 // Création des articles
+// Création des articles
 foreach (self::ARTICLES as $key => $value) {
     $article = new Article();
     $article
@@ -503,11 +504,12 @@ foreach (self::ARTICLES as $key => $value) {
     $categoryArticleKey = $value['categoryArticle'];
 
     if (isset($categoryArticles[$categoryArticleKey])) {
-        $article->setCategoryArticle($categoryArticles[$categoryArticleKey]);
+        $article->addCategoryArticle($categoryArticles[$categoryArticleKey]);
     }
 
     $manager->persist($article);
 }
+
 
 //Création d'utilisateurs
         for ($i = 0; $i < 5; $i++) {
