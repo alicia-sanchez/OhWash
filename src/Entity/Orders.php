@@ -42,9 +42,7 @@ class Orders
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user1 = null;
 
-    #[ORM\ManyToOne(inversedBy: 'basket_id')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Basket $basket = null;
+
 
     public function getId(): ?int
     {
@@ -147,15 +145,5 @@ class Orders
         return $this;
     }
 
-    public function getBasket(): ?Basket
-    {
-        return $this->basket;
-    }
 
-    public function setBasket(?Basket $basket): static
-    {
-        $this->basket = $basket;
-
-        return $this;
-    }
 }

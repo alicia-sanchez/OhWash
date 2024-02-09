@@ -17,10 +17,10 @@ class Article
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100, nullable: true)]
+    #[ORM\Column(length: 100)]
     private ?string $name = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer')]
     private ?int $price = null;
 
     #[ORM\ManyToMany(targetEntity: CategoryArticle::class, mappedBy: 'articles')]
