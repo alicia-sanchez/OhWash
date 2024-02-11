@@ -22,7 +22,8 @@ class DashboardController extends AbstractDashboardController
     {
 
          $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
-         return $this->redirect($adminUrlGenerator->setController(CategoryServiceCrudController::class)->generateUrl());
+         return $this->redirect($adminUrlGenerator->setController(CategoryServiceCrudController::class)
+         ->generateUrl());
 
     }
 
@@ -42,3 +43,4 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Article', 'fas fa-shopping-bag', Article::class);
     }
 }
+
