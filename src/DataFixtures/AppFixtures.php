@@ -10,14 +10,19 @@ use App\Entity\CategoryService;
 use App\Entity\Service;
 use App\Entity\CategoryArticle; 
 use App\Entity\Article; 
+use App\Entity\Orders;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
 
-    public function __construct(private UserPasswordHasherInterface $hasher)
+    private UserPasswordHasherInterface $hasher;
+
+    public function __construct(UserPasswordHasherInterface $hasher)
     {
+        $this->hasher = $hasher;
     }
+    
 
     private const CATEGORIES_SERVICES = [
         'pressing' => [
@@ -411,6 +416,7 @@ class AppFixtures extends Fixture
             'price' => 12,
         ],
     ];
+
     
     public function load(ObjectManager $manager): void
     {
@@ -485,6 +491,8 @@ foreach ($serviceData['category_article'] as $categoryArticleKey) {
     $manager->persist($service);
 }
 
+
+
 $manager->flush();
 
 
@@ -512,33 +520,76 @@ foreach (self::ARTICLES as $key => $value) {
 
 
 //Création d'utilisateurs
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 8; $i++) {
             $user = new User();
             $user
                 ->setEmail($faker->email)
                 ->setFirstname($faker->firstName)
                 ->setLastname($faker->lastName)
                 ->setPassword($this->hasher->hashPassword($user, 'test'))
-                ->setRoles(['ROLE_USER'])
+                ->setRole([$faker->randomElement(['ROLE_USER', 'ROLE_EMPLOYE'])])
                 ->setGender($faker->randomElement(['male', 'female']))
-                ->setAdress($faker->address);
+                ->setAdress($faker->address)
+                ->setCity($faker->city)
+                ->setZipCode((int) $faker->postcode)
+                ->setCountry($faker->country);
 
             $manager->persist($user);
         }
+
 //Création Admin
-            $admin = new User();
-            $admin
-                ->setEmail('admin@admin.com')
-                ->setFirstname($faker->firstName)
-                ->setLastname($faker->lastName)
-                ->setPassword($this->hasher->hashPassword($user, 'admin'))
-                ->setRoles(['ROLE_ADMIN'])
-                ->setGender($faker->randomElement(['male', 'female']))
-                ->setAdress($faker->address);
+$admin = new User();
+$admin
+    ->setEmail('admin@admin.com')
+    ->setFirstname($faker->firstName)
+    ->setLastname($faker->lastName)
+    ->setPassword($this->hasher->hashPassword($admin, 'admin')) // Utilise $admin ici au lieu de $user
+    ->setRole(['ROLE_ADMIN'])
+    ->setGender($faker->randomElement(['male', 'female']))
+    ->setAdress($faker->address)
+    ->setCity($faker->city)
+    ->setZipCode((int) $faker->postcode)
+                ->setCountry($faker->country);
 
-            $manager->persist($admin);
+$manager->persist($admin);
+
+
+// Création de commandes pour chaque utilisateur
+for ($j = 0; $j < 6; $j++) {
+    $order = new Orders();
+    $order->setStatus($faker->randomElement(['à traiter', 'en cours', 'terminée']));
+    $order->setStatusDate($faker->dateTimeThisYear());
+    $order->setPayementDate($faker->dateTimeThisYear());
+    $order->setTotalPrice($faker->randomFloat(2, 20, 200));
+    $order->setDepositDate($faker->dateTimeThisYear());
+    $order->setPickupDate($faker->dateTimeThisYear());
+    $order->setUser($user);
     
+    // Ajoutez quelques articles à chaque commande
+    $articleKeys = array_keys(self::ARTICLES);
+    $selectedArticles = $faker->randomElements($articleKeys, mt_rand(1, 4));
+
+    foreach ($selectedArticles as $articleKey) {
+        $articleData = self::ARTICLES[$articleKey];
+        $article = new Article();
+        $article->setName($articleData['name']);
+        $article->setPrice($articleData['price']);
+        // Configurez ici d'autres propriétés de l'article, comme la catégorie et les services
+        $manager->persist($article);
+
+        // Associez l'article à la commande
+        $order->addArticle($article);
+    }
+
+    $manager->persist($order);
+}
+
 $manager->flush();
+}
+
 
 }
-}
+    
+
+
+

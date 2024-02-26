@@ -26,9 +26,13 @@ class Article
     #[ORM\ManyToMany(targetEntity: CategoryArticle::class, mappedBy: 'articles')]
     private Collection $categoryArticles;
 
+    #[ORM\ManyToMany(targetEntity: Orders::class, mappedBy: 'articles')]
+    private Collection $orders;
+
     public function __construct()
     {
         $this->categoryArticles = new ArrayCollection();
+        $this->orders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -39,6 +43,11 @@ class Article
     public function getName(): ?string
     {
         return $this->name;
+    }
+
+    public function __toString()
+    {
+        return $this->getName();
     }
 
     public function setName(?string $name): self
@@ -82,6 +91,33 @@ class Article
     {
         if ($this->categoryArticles->removeElement($categoryArticle)) {
             $categoryArticle->removeArticle($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Orders>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Orders $order): static
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->addArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Orders $order): static
+    {
+        if ($this->orders->removeElement($order)) {
+            $order->removeArticle($this);
         }
 
         return $this;

@@ -9,3 +9,6 @@ api_signup:
   path: /api/signup
   controller: App\Controller\SecurityController
   methods: [GET]
+assign_order_to_employee:
+  path: /assign/order/{orderId}/employee/{employeeId}
+  controller: App\Controller\OrderController::assignOrderToEmployee

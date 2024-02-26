@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240207210441 extends AbstractMigration
+final class Version20240211155203 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,22 +20,21 @@ final class Version20240207210441 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE article (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(100) DEFAULT NULL, price INT DEFAULT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE article (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(100) NOT NULL, price INT NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE category_article (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(100) DEFAULT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE category_article_article (category_article_id INT NOT NULL, article_id INT NOT NULL, INDEX IDX_B7611683548AD6E2 (category_article_id), INDEX IDX_B76116837294869C (article_id), PRIMARY KEY(category_article_id, article_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE category_article_service (category_article_id INT NOT NULL, service_id INT NOT NULL, INDEX IDX_54C68237548AD6E2 (category_article_id), INDEX IDX_54C68237ED5CA9E6 (service_id), PRIMARY KEY(category_article_id, service_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE category_service (id INT AUTO_INCREMENT NOT NULL, description LONGTEXT NOT NULL, information LONGTEXT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE orders (id INT AUTO_INCREMENT NOT NULL, user_id INT NOT NULL, user1_id INT NOT NULL, status VARCHAR(255) NOT NULL, status_date DATE NOT NULL, payement_date DATETIME NOT NULL, deposit_date DATE NOT NULL, pickup_date DATE NOT NULL, total_price DOUBLE PRECISION NOT NULL, INDEX IDX_E52FFDEEA76ED395 (user_id), INDEX IDX_E52FFDEE56AE248B (user1_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE orders (id INT AUTO_INCREMENT NOT NULL, user_id INT DEFAULT NULL, status VARCHAR(255) NOT NULL, status_date DATE NOT NULL, payement_date DATETIME NOT NULL, deposit_date DATE NOT NULL, pickup_date DATE NOT NULL, total_price DOUBLE PRECISION NOT NULL, INDEX IDX_E52FFDEEA76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE service (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(100) DEFAULT NULL, description VARCHAR(150) DEFAULT NULL, price INT DEFAULT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE service_category_service (service_id INT NOT NULL, category_service_id INT NOT NULL, INDEX IDX_8100FDBDED5CA9E6 (service_id), INDEX IDX_8100FDBDCB42F998 (category_service_id), PRIMARY KEY(service_id, category_service_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE service_category_article (service_id INT NOT NULL, category_article_id INT NOT NULL, INDEX IDX_62A76909ED5CA9E6 (service_id), INDEX IDX_62A76909548AD6E2 (category_article_id), PRIMARY KEY(service_id, category_article_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE `user` (id INT AUTO_INCREMENT NOT NULL, email VARCHAR(180) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, gender VARCHAR(100) NOT NULL, adress VARCHAR(255) NOT NULL, firstname VARCHAR(100) NOT NULL, lastname VARCHAR(100) NOT NULL, UNIQUE INDEX UNIQ_8D93D649E7927C74 (email), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE user (id INT AUTO_INCREMENT NOT NULL, firstname VARCHAR(100) NOT NULL, lastname VARCHAR(100) NOT NULL, email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, role VARCHAR(100) NOT NULL, gender VARCHAR(100) DEFAULT NULL, city VARCHAR(255) NOT NULL, zip_code INT NOT NULL, country VARCHAR(255) NOT NULL, adress VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('ALTER TABLE category_article_article ADD CONSTRAINT FK_B7611683548AD6E2 FOREIGN KEY (category_article_id) REFERENCES category_article (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE category_article_article ADD CONSTRAINT FK_B76116837294869C FOREIGN KEY (article_id) REFERENCES article (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE category_article_service ADD CONSTRAINT FK_54C68237548AD6E2 FOREIGN KEY (category_article_id) REFERENCES category_article (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE category_article_service ADD CONSTRAINT FK_54C68237ED5CA9E6 FOREIGN KEY (service_id) REFERENCES service (id) ON DELETE CASCADE');
-        $this->addSql('ALTER TABLE orders ADD CONSTRAINT FK_E52FFDEEA76ED395 FOREIGN KEY (user_id) REFERENCES `user` (id)');
-        $this->addSql('ALTER TABLE orders ADD CONSTRAINT FK_E52FFDEE56AE248B FOREIGN KEY (user1_id) REFERENCES `user` (id)');
+        $this->addSql('ALTER TABLE orders ADD CONSTRAINT FK_E52FFDEEA76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
         $this->addSql('ALTER TABLE service_category_service ADD CONSTRAINT FK_8100FDBDED5CA9E6 FOREIGN KEY (service_id) REFERENCES service (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE service_category_service ADD CONSTRAINT FK_8100FDBDCB42F998 FOREIGN KEY (category_service_id) REFERENCES category_service (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE service_category_article ADD CONSTRAINT FK_62A76909ED5CA9E6 FOREIGN KEY (service_id) REFERENCES service (id)');
@@ -50,7 +49,6 @@ final class Version20240207210441 extends AbstractMigration
         $this->addSql('ALTER TABLE category_article_service DROP FOREIGN KEY FK_54C68237548AD6E2');
         $this->addSql('ALTER TABLE category_article_service DROP FOREIGN KEY FK_54C68237ED5CA9E6');
         $this->addSql('ALTER TABLE orders DROP FOREIGN KEY FK_E52FFDEEA76ED395');
-        $this->addSql('ALTER TABLE orders DROP FOREIGN KEY FK_E52FFDEE56AE248B');
         $this->addSql('ALTER TABLE service_category_service DROP FOREIGN KEY FK_8100FDBDED5CA9E6');
         $this->addSql('ALTER TABLE service_category_service DROP FOREIGN KEY FK_8100FDBDCB42F998');
         $this->addSql('ALTER TABLE service_category_article DROP FOREIGN KEY FK_62A76909ED5CA9E6');
@@ -64,6 +62,6 @@ final class Version20240207210441 extends AbstractMigration
         $this->addSql('DROP TABLE service');
         $this->addSql('DROP TABLE service_category_service');
         $this->addSql('DROP TABLE service_category_article');
-        $this->addSql('DROP TABLE `user`');
+        $this->addSql('DROP TABLE user');
     }
 }

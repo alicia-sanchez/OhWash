@@ -4,8 +4,11 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\OrdersRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+
 
 #[ORM\Entity(repositoryClass: OrdersRepository::class)]
 #[ApiResource]
@@ -14,6 +17,7 @@ class Orders
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -34,20 +38,26 @@ class Orders
     #[ORM\Column]
     private ?float $total_price = null;
 
-    #[ORM\ManyToOne(inversedBy: 'user_id')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(inversedBy: 'orders')]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'user_id1')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user1 = null;
+    #[ORM\ManyToMany(targetEntity: Article::class, inversedBy: 'orders')]
+    private Collection $articles;
 
+    #[ORM\ManyToOne(inversedBy: 'assignedEmployee')]
+    private ?User $assignedEmployee = null;
 
+    public function __construct()
+    {
+        $this->articles = new ArrayCollection();
+    }
 
+    
     public function getId(): ?int
     {
         return $this->id;
     }
+
 
     public function getStatus(): ?string
     {
@@ -133,17 +143,43 @@ class Orders
         return $this;
     }
 
-    public function getUser1(): ?User
+    /**
+     * @return Collection<int, Article>
+     */
+    public function getArticles(): Collection
     {
-        return $this->user1;
+        return $this->articles;
     }
 
-    public function setUser1(?User $user1): static
+    public function addArticle(Article $article): static
     {
-        $this->user1 = $user1;
+        if (!$this->articles->contains($article)) {
+            $this->articles->add($article);
+        }
 
         return $this;
     }
+
+    public function removeArticle(Article $article): static
+    {
+        $this->articles->removeElement($article);
+
+        return $this;
+    }
+
+    public function getAssignedEmployee(): ?User
+    {
+        return $this->assignedEmployee;
+    }
+
+    public function setAssignedEmployee(?User $assignedEmployee): static
+    {
+        $this->assignedEmployee = $assignedEmployee;
+
+        return $this;
+    }
+
+    
 
 
 }
