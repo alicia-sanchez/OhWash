@@ -3,33 +3,32 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Orders;
+use App\Entity\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
-use Doctrine\ORM\QueryBuilder;
-use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
-use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 
 
 
 class OrdersCrudController extends AbstractCrudController
 {
+    private EntityManagerInterface $entityManager;
     private AdminUrlGenerator $adminUrlGenerator;
 
-    public function __construct(AdminUrlGenerator $adminUrlGenerator)
+    public function __construct(EntityManagerInterface $entityManager, AdminUrlGenerator $adminUrlGenerator)
     {
+        $this->entityManager = $entityManager;
         $this->adminUrlGenerator = $adminUrlGenerator;
     }
 
@@ -44,58 +43,72 @@ class OrdersCrudController extends AbstractCrudController
             IdField::new('id')->hideOnDetail()->hideOnForm()->hideOnIndex(),
             TextField::new('status', 'Statut'),
             DateTimeField::new('status_date', 'Date du Statut'),
-            DateTimeField::new('payement_date', 'Date de Paiement'),
+            DateTimeField::new('payment_date', 'Date de Paiement'),
             DateTimeField::new('deposit_date', 'Date de Dépôt'),
             DateTimeField::new('pickup_date', 'Date de Ramassage'),
             NumberField::new('total_price', 'Prix Total'),
             AssociationField::new('user', 'Utilisateur'),
             AssociationField::new('articles', 'Articles'),
             AssociationField::new('assignedEmployee', 'Employé Assigné'),
+            AssociationField::new('Service', 'Services')
+            ->setCrudController(ServiceCrudController::class)
+            
         ];
     }
 
     public function configureActions(Actions $actions): Actions
     {
-        // Ici, vous pouvez configurer vos actions comme vous le souhaitez. 
-        // Par exemple, ajouter une action personnalisée, modifier des actions existantes, etc.
-        // Exemple d'ajout d'une action détail si elle n'est pas déjà présente par défaut :
-        $actions->add(Crud::PAGE_INDEX, Action::DETAIL);
+        $setInProgress = Action::new('setInProgress', 'en cours', 'fa fa-running')
+        ->linkToCrudAction('setOrderStatusInProgress')
+        ->setCssClass('btn btn-warning')
+        ->displayIf(static function ($entity) {
+            return in_array($entity->getStatus(), ['à traiter']); // Ajustez selon vos valeurs réelles
+        });
+    
+    $setCompleted = Action::new('setCompleted', 'terminée', 'fa fa-check')
+        ->linkToCrudAction('setOrderStatusCompleted')
+        ->setCssClass('btn btn-success')
+        ->displayIf(static function ($entity) {
+            return $entity->getStatus() === 'en cours'; // Ajustez selon vos valeurs réelles
+        });
+    
 
-        // Assurez-vous de retourner l'objet $actions à la fin
+        $actions = parent::configureActions($actions);
+
+        if ($this->isGranted('ROLE_EMPLOYE')) {
+            $actions
+                ->add(Crud::PAGE_INDEX, $setInProgress)
+                ->add(Crud::PAGE_INDEX, $setCompleted);
+        }
+
         return $actions;
     }
 
-    public function redirectToAssignOrder(int $orderId, int $employeeId): RedirectResponse
-{
-    return $this->redirect($this->generateUrl('assign_order_to_employee', [
-        'orderId' => $orderId,
-        'employeeId' => $employeeId
-    ]));
-}
+    public function setOrderStatusInProgress(AdminContext $context)
+    {
+        $orderId = $context->getRequest()->get('entityId');
+        $order = $this->entityManager->getRepository(Orders::class)->find($orderId);
 
+        if ($order) {
+            $order->setStatus('en cours');
+            $this->entityManager->flush();
+        }
 
+        return $this->redirect($context->getReferrer());
+    }
 
-public function someAction(Request $request): RedirectResponse
-{
-    $orderId = $request->get('orderId');
-    $employeeId = $request->get('employeeId');
+    public function setOrderStatusCompleted(AdminContext $context)
+    {
+        $orderId = $context->getRequest()->get('entityId');
+        $order = $this->entityManager->getRepository(Orders::class)->find($orderId);
 
-    // Assurez-vous de valider et de vérifier les valeurs ici
+        if ($order) {
+            $order->setStatus('terminée');
+            $this->entityManager->flush();
+        }
 
-    return $this->redirect($this->generateUrl('assign_order_to_employee', [
-        'orderId' => $orderId,
-        'employeeId' => $employeeId
-    ]));
-}
-
-public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
-{
-    // Simplement retourner le queryBuilder de la méthode parent sans filtrage supplémentaire
-    return parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
-}
-
-
-
+        return $this->redirect($context->getReferrer());
+    }
 
 
 

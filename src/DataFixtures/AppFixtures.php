@@ -527,7 +527,7 @@ foreach (self::ARTICLES as $key => $value) {
                 ->setFirstname($faker->firstName)
                 ->setLastname($faker->lastName)
                 ->setPassword($this->hasher->hashPassword($user, 'test'))
-                ->setRole([$faker->randomElement(['ROLE_USER', 'ROLE_EMPLOYE'])])
+                ->setRoles([$faker->randomElement(['ROLE_USER', 'ROLE_EMPLOYE'])])
                 ->setGender($faker->randomElement(['male', 'female']))
                 ->setAdress($faker->address)
                 ->setCity($faker->city)
@@ -544,7 +544,7 @@ $admin
     ->setFirstname($faker->firstName)
     ->setLastname($faker->lastName)
     ->setPassword($this->hasher->hashPassword($admin, 'admin')) // Utilise $admin ici au lieu de $user
-    ->setRole(['ROLE_ADMIN'])
+    ->setRoles(['ROLE_ADMIN'])
     ->setGender($faker->randomElement(['male', 'female']))
     ->setAdress($faker->address)
     ->setCity($faker->city)
@@ -555,7 +555,9 @@ $manager->persist($admin);
 
 
 // Création de commandes pour chaque utilisateur
-for ($j = 0; $j < 6; $j++) {
+$services = $manager->getRepository(Service::class)->findAll();
+
+for ($j = 0; $j < 15; $j++) {
     $order = new Orders();
     $order->setStatus($faker->randomElement(['à traiter', 'en cours', 'terminée']));
     $order->setStatusDate($faker->dateTimeThisYear());
@@ -580,6 +582,14 @@ for ($j = 0; $j < 6; $j++) {
         // Associez l'article à la commande
         $order->addArticle($article);
     }
+
+    // Sélectionnez aléatoirement des services à ajouter à la commande
+    $selectedServices = $faker->randomElements($services, mt_rand(1, 3)); // Sélection aléatoire de 1 à 3 services
+    foreach ($selectedServices as $service) {
+        $order->addService($service);
+    }
+
+    $manager->persist($order);
 
     $manager->persist($order);
 }

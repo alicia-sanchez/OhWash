@@ -15,6 +15,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 
 class EmployesCrudController extends AbstractCrudController
 {
@@ -28,6 +30,17 @@ class EmployesCrudController extends AbstractCrudController
     public static function getEntityFqcn(): string
     {
         return User::class;
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        $actions = parent::configureActions($actions);
+    
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $actions->disable(Action::NEW, Action::EDIT, Action::DELETE);
+        }
+    
+        return $actions;
     }
 
     public function configureFields(string $pageName): iterable

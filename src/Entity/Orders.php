@@ -27,7 +27,7 @@ class Orders
     private ?\DateTimeInterface $status_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $payement_date = null;
+    private ?\DateTimeInterface $payment_date = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $deposit_date = null;
@@ -47,9 +47,13 @@ class Orders
     #[ORM\ManyToOne(inversedBy: 'assignedEmployee')]
     private ?User $assignedEmployee = null;
 
+    #[ORM\ManyToMany(targetEntity: Service::class, inversedBy: 'orders')]
+    private Collection $Service;
+
     public function __construct()
     {
         $this->articles = new ArrayCollection();
+        $this->Service = new ArrayCollection();
     }
 
     
@@ -83,14 +87,14 @@ class Orders
         return $this;
     }
 
-    public function getPayementDate(): ?\DateTimeInterface
+    public function getPaymentDate(): ?\DateTimeInterface
     {
-        return $this->payement_date;
+        return $this->payment_date;
     }
 
-    public function setPayementDate(\DateTimeInterface $payement_date): static
+    public function setPaymentDate(\DateTimeInterface $payment_date): static
     {
-        $this->payement_date = $payement_date;
+        $this->payment_date = $payment_date;
 
         return $this;
     }
@@ -175,6 +179,30 @@ class Orders
     public function setAssignedEmployee(?User $assignedEmployee): static
     {
         $this->assignedEmployee = $assignedEmployee;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Service>
+     */
+    public function getService(): Collection
+    {
+        return $this->Service;
+    }
+
+    public function addService(Service $service): static
+    {
+        if (!$this->Service->contains($service)) {
+            $this->Service->add($service);
+        }
+
+        return $this;
+    }
+
+    public function removeService(Service $service): static
+    {
+        $this->Service->removeElement($service);
 
         return $this;
     }

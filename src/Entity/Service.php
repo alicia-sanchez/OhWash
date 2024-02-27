@@ -41,12 +41,16 @@ class Service
     #[ORM\ManyToMany(targetEntity: CategoryArticle::class, inversedBy: 'services')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Collection $category_article = null;
+
+    #[ORM\ManyToMany(targetEntity: Orders::class, mappedBy: 'Service')]
+    private Collection $orders;
     
 
     public function __construct()
     {
         $this->category_service = new ArrayCollection();
         $this->category_article = new ArrayCollection();
+        $this->orders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -151,5 +155,32 @@ class Service
     public function __toString(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @return Collection<int, Orders>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Orders $order): static
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->addService($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Orders $order): static
+    {
+        if ($this->orders->removeElement($order)) {
+            $order->removeService($this);
+        }
+
+        return $this;
     }
 }
