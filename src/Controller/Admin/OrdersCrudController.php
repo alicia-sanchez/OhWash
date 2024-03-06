@@ -2,7 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Orders;
+use App\Entity\Order;
 use App\Entity\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -34,7 +34,7 @@ class OrdersCrudController extends AbstractCrudController
 
     public static function getEntityFqcn(): string
     {
-        return Orders::class;
+        return Order::class;
     }
 
     public function configureFields(string $pageName): iterable

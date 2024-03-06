@@ -7,6 +7,7 @@ use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Order;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[ApiResource]
@@ -26,13 +27,13 @@ class Article
     #[ORM\ManyToMany(targetEntity: CategoryArticle::class, mappedBy: 'articles')]
     private Collection $categoryArticles;
 
-    #[ORM\ManyToMany(targetEntity: Orders::class, mappedBy: 'articles')]
-    private Collection $orders;
+    #[ORM\ManyToMany(targetEntity: Order::class, mappedBy: 'articles')]
+    private Collection $order;
 
     public function __construct()
     {
         $this->categoryArticles = new ArrayCollection();
-        $this->orders = new ArrayCollection();
+        $this->order = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -97,26 +98,26 @@ class Article
     }
 
     /**
-     * @return Collection<int, Orders>
+     * @return Collection<int, Order>
      */
-    public function getOrders(): Collection
+    public function getOrder(): Collection
     {
-        return $this->orders;
+        return $this->order;
     }
 
-    public function addOrder(Orders $order): static
+    public function addOrder(Order $order): static
     {
-        if (!$this->orders->contains($order)) {
-            $this->orders->add($order);
+        if (!$this->order->contains($order)) {
+            $this->order->add($order);
             $order->addArticle($this);
         }
 
         return $this;
     }
 
-    public function removeOrder(Orders $order): static
+    public function removeOrder(Order $order): static
     {
-        if ($this->orders->removeElement($order)) {
+        if ($this->order->removeElement($order)) {
             $order->removeArticle($this);
         }
 

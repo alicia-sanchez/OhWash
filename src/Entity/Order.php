@@ -3,16 +3,17 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\OrdersRepository;
+use App\Repository\OrderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 
-#[ORM\Entity(repositoryClass: OrdersRepository::class)]
+#[ORM\Entity(repositoryClass: OrderRepository::class)]
+#[ORM\Table(name: '`order`')]
 #[ApiResource]
-class Orders
+class Order
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -41,13 +42,13 @@ class Orders
     #[ORM\ManyToOne(inversedBy: 'orders')]
     private ?User $user = null;
 
-    #[ORM\ManyToMany(targetEntity: Article::class, inversedBy: 'orders')]
+    #[ORM\ManyToMany(targetEntity: Article::class, inversedBy: 'order')]
     private Collection $articles;
 
     #[ORM\ManyToOne(inversedBy: 'assignedEmployee')]
     private ?User $assignedEmployee = null;
 
-    #[ORM\ManyToMany(targetEntity: Service::class, inversedBy: 'orders')]
+    #[ORM\ManyToMany(targetEntity: Service::class, inversedBy: 'order')]
     private Collection $Service;
 
     public function __construct()

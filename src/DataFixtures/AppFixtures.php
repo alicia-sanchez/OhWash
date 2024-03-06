@@ -32,7 +32,8 @@ class AppFixtures extends Fixture
         ],
         'blanchisserie' => [
             'name' => 'blanchisserie',
-            'description' => 'Services de lavage, séchage et pliage pour votre linge quotidien.',
+            'description' => 'Services de lavage, séchage et 
+                                pliage pour votre linge quotidien.',
             'information' => 'Laver + Secher au sèche-linge + dans un sac'
         ],
         'ameublement' => [
@@ -51,14 +52,17 @@ class AppFixtures extends Fixture
     private const SERVICES = [
         'nettoyage_a_sec' => [
             'name' => 'Nettoyage à sec',
-            'description' => 'Nettoyage doux sans produits chimiques agressifs, préservant la qualité de vos tissus et de l\'environnement.',
+            'description' => 'Nettoyage doux sans produits chimiques agressifs, 
+                            préservant la qualité de vos tissus et de l\'environnement.',
             'price' => 6,
             'category' => ['pressing'],
-            'category_article' => ['vetement_exterieur', 'tenue_quotidien', 'vetement_delicat', 'tenue_soiree', 'rideaux_voilages']
+            'category_article' => ['vetement_exterieur', 'tenue_quotidien', 'vetement_delicat', 
+                                    'tenue_soiree', 'rideaux_voilages']
         ],
         'nettoyage_de_tissus_délicats' => [
             'name' => 'Nettoyage de tissus délicats',
-            'description' => 'Nettoyage doux sans produits chimiques agressifs, préservant la qualité de vos tissus et de l\'environnement.',
+            'description' => 'Nettoyage doux sans produits chimiques agressifs, 
+                                préservant la qualité de vos tissus et de l\'environnement.',
             'price' => 8,
             'category' => ['pressing'],
             'category_article' => ['vetement_delicat', 'tenue_soiree', 'rideaux_voilages','linge_maison']
@@ -419,45 +423,52 @@ class AppFixtures extends Fixture
 
     
     public function load(ObjectManager $manager): void
-    {
+{
+    // Utilisation de Faker pour générer des données aléatoires en français
+    $faker = Factory::create('fr_FR');
     
-        
-        $faker = Factory::create('fr_FR');
-        
+    // Création des catégories d'articles 
+    $categoryArticles = [];
+    // Parcours des catégories d'articles définies dans la constante CATEGORIES_ARTICLES
+    foreach (self::CATEGORIES_ARTICLES as $key => $categoryName) {
+        // Création d'une nouvelle instance de CategoryArticle
+        $categoryArticle = new CategoryArticle();
+        // Définition du nom de la catégorie d'article
+        $categoryArticle->setName($categoryName);
+        // Persiste la catégorie d'article dans le gestionnaire d'entités
+        $manager->persist($categoryArticle);
+        // Stockage de la catégorie d'article dans un tableau
+        $categoryArticles[$key] = $categoryArticle; 
+    }
+
+    // flush pour sauvegarder les catégories d'articles dans la base de données
+    $manager->flush(); 
+
+    // Création des Catégories de Services
+    $categoryServices = []; 
+    // Parcours des catégories de services définies dans la constante CATEGORIES_SERVICES
+    foreach (self::CATEGORIES_SERVICES as $key => $value) {
+        // Création d'une nouvelle instance de CategoryService
+        $categoryService = new CategoryService();
+        // Définition des attributs de la catégorie de service
+        $categoryService
+            ->setName($value['name'])
+            ->setDescription($value['description'])
+            ->setInformation($value['information']);
+        // Persiste la catégorie de service dans le gestionnaire d'entités
+        $manager->persist($categoryService);
+        // Stockage de la catégorie de service dans un tableau
+        $categoryServices[$key] = $categoryService;
+    }
+// flush pour sauvegarde dans la base de données
+    $manager->flush();
 
 
-// Création des catégories d'articles 
-$categoryArticles = [];
-foreach (self::CATEGORIES_ARTICLES as $key => $categoryName) {
-    $categoryArticle = new CategoryArticle();
-    $categoryArticle->setName($categoryName);
-    $manager->persist($categoryArticle);
-
-    $categoryArticles[$key] = $categoryArticle; // Stockage dans le tableau
-}
-
-$manager->flush(); // Flush pour obtenir les références
-
-
-// Création des Catégories de Services
-$categoryServices = []; 
-foreach (self::CATEGORIES_SERVICES as $key => $value) {
-    $categoryService = new CategoryService();
-    $categoryService
-        ->setName($value['name'])
-        ->setDescription($value['description'])
-        ->setInformation($value['information']);
-    $manager->persist($categoryService);
-    $categoryServices[$key] = $categoryService;
-}
-
-// Assurez-vous de flush avant de créer les services pour obtenir les IDs générés pour les catégories
-$manager->flush();
-
-// Création des services
 // Création des services
 foreach (self::SERVICES as $key => $serviceData) {
+    // Création d'une nouvelle instance de Service
     $service = new Service();
+    // Définition des attributs de service
     $service->setName($serviceData['name']);
     $service->setDescription($serviceData['description']);
     $service->setPrice($serviceData['price']);
@@ -471,7 +482,6 @@ foreach (self::SERVICES as $key => $serviceData) {
         $service->addCategoryService($categoryService);
     }
 
-    // Associer les catégories d'articles avec le service
 // Associer les catégories d'articles avec le service
 foreach ($serviceData['category_article'] as $categoryArticleKey) {
     // Vérifiez que la clé existe dans vos données fixtures avant d'accéder à $categoryArticles
@@ -526,7 +536,7 @@ foreach (self::ARTICLES as $key => $value) {
                 ->setEmail($faker->email)
                 ->setFirstname($faker->firstName)
                 ->setLastname($faker->lastName)
-                ->setPassword($this->hasher->hashPassword($user, 'test'))
+                ->setPlainPassword('test')
                 ->setRoles([$faker->randomElement(['ROLE_USER', 'ROLE_EMPLOYE'])])
                 ->setGender($faker->randomElement(['male', 'female']))
                 ->setAdress($faker->address)
@@ -538,20 +548,20 @@ foreach (self::ARTICLES as $key => $value) {
         }
 
 //Création Admin
-$admin = new User();
-$admin
-    ->setEmail('admin@admin.com')
-    ->setFirstname($faker->firstName)
-    ->setLastname($faker->lastName)
-    ->setPassword($this->hasher->hashPassword($admin, 'admin')) // Utilise $admin ici au lieu de $user
-    ->setRoles(['ROLE_ADMIN'])
-    ->setGender($faker->randomElement(['male', 'female']))
-    ->setAdress($faker->address)
-    ->setCity($faker->city)
-    ->setZipCode((int) $faker->postcode)
-                ->setCountry($faker->country);
+        $admin = new User();
+        $admin
+            ->setEmail('admin@admin.com')
+            ->setFirstname($faker->firstName)
+            ->setLastname($faker->lastName)
+            ->setPlainPassword('admin')
+            ->setRoles(['ROLE_ADMIN'])
+            ->setGender($faker->randomElement(['male', 'female']))
+            ->setAdress($faker->address)
+            ->setCity($faker->city)
+            ->setZipCode((int) $faker->postcode)
+                        ->setCountry($faker->country);
 
-$manager->persist($admin);
+        $manager->persist($admin);
 
 
 // Création de commandes pour chaque utilisateur
@@ -561,7 +571,7 @@ for ($j = 0; $j < 15; $j++) {
     $order = new Orders();
     $order->setStatus($faker->randomElement(['à traiter', 'en cours', 'terminée']));
     $order->setStatusDate($faker->dateTimeThisYear());
-    $order->setPayementDate($faker->dateTimeThisYear());
+    $order->setPaymentDate($faker->dateTimeThisYear());
     $order->setTotalPrice($faker->randomFloat(2, 20, 200));
     $order->setDepositDate($faker->dateTimeThisYear());
     $order->setPickupDate($faker->dateTimeThisYear());

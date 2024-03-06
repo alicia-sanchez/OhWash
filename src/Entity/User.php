@@ -39,18 +39,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(["user:read", "user:write"])]
     private ?string $email = null;
 
+    /**
+    *@var 
+string The hashed password
+*/
+
     #[ORM\Column(length: 255)]
     #[Groups(["user:read", "user:write"])]
     private ?string $password = null;
 
 
-    private ?string $plainPassword ;
+    private ?string $plainPassword = null;
 
 
 
     #[ORM\Column(length: 100)]
     #[Groups(["user:read", "user:write"])]
     private array $role = [];
+
+    #[ORM\Column(type: 'boolean')]
+private $isEmployee = false;
+
 
     #[ORM\Column(length: 100, nullable: true)]
     #[Groups(["user:read", "user:write"])]
@@ -72,16 +81,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(["user:read", "user:write"])]
     private ?string $adress = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Orders::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Order::class)]
     #[Groups(["user:read", "user:write"])]
-    private Collection $orders;
+    private Collection $order;
 
-    #[ORM\OneToMany(mappedBy: 'assignedEmployee', targetEntity: Orders::class)]
+    #[ORM\OneToMany(mappedBy: 'assignedEmployee', targetEntity: Order::class)]
     private Collection $assignedEmployee;
 
     public function __construct()
     {
-        $this->orders = new ArrayCollection();
+        $this->order = new ArrayCollection();
         $this->assignedEmployee = new ArrayCollection();
     }
 
@@ -172,6 +181,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getIsEmployee(): bool
+{
+    return $this->isEmployee;
+}
+
+public function setIsEmployee(bool $isEmployee): self
+{
+    $this->isEmployee = $isEmployee;
+    return $this;
+}
+
+
     public function getGender(): ?string
     {
         return $this->gender;
@@ -235,24 +256,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Orders>
      */
-    public function getOrders(): Collection
+    public function getOrder(): Collection
     {
-        return $this->orders;
+        return $this->order;
     }
 
-    public function addOrder(Orders $order): static
+    public function addOrder(Order $order): static
     {
-        if (!$this->orders->contains($order)) {
-            $this->orders->add($order);
+        if (!$this->order->contains($order)) {
+            $this->order->add($order);
             $order->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeOrder(Orders $order): static
+    public function removeOrder(Order $order): static
     {
-        if ($this->orders->removeElement($order)) {
+        if ($this->order->removeElement($order)) {
             // set the owning side to null (unless already changed)
             if ($order->getUser() === $this) {
                 $order->setUser(null);
@@ -288,7 +309,7 @@ public function getAssignedEmployee(): Collection
     return $this->assignedEmployee;
 }
 
-public function addAssignedEmployee(Orders $assignedEmployee): static
+public function addAssignedEmployee(Order $assignedEmployee): static
 {
     if (!$this->assignedEmployee->contains($assignedEmployee)) {
         $this->assignedEmployee->add($assignedEmployee);
@@ -298,7 +319,7 @@ public function addAssignedEmployee(Orders $assignedEmployee): static
     return $this;
 }
 
-public function removeAssignedEmployee(Orders $assignedEmployee): static
+public function removeAssignedEmployee(Order $assignedEmployee): static
 {
     if ($this->assignedEmployee->removeElement($assignedEmployee)) {
         // set the owning side to null (unless already changed)

@@ -1,0 +1,196 @@
+/* =========== VARIABLES CSS ========= */
+:root {
+  /* == HEADER == */
+  --header: 3rem;
+
+  /* == COLORS == */
+  --first-color: #a6c48a;
+  --second-color: #ffeedd;
+  --blue-color: #a6ddf4;
+  --pink-color: #e7c8dd;
+  --orange-color: #fa8963;
+  --yellow-color: #ffdb62;
+  --text-color: #1f1f1f;
+  --body-color: #ffff;
+
+  --base-white-color: #ffff;
+  --base-black-color: #0000;
+
+  /* == WEIGHT - SIZE == */
+  --font-medium: 500;
+  --font-semi-bold: 600;
+
+  /* == FONT - SIZE == */
+  --h1-font-size: 3.7rem;
+  --h2-font-size: 2.25rem;
+  --h3-font-size: 2rem;
+  --h4-font-size: 1.5rem;
+  --h5-font-size: 1.25rem;
+  --h6-font-size: 1.12rem;
+  --small-font-size: 0.87rem;
+  --smaller-font-size: 0.62rem;
+
+  /* == FONT - FAMILY == */
+  --body-font: "Mukta", sans-serif;
+  /* == MARGINS - SIZE == */
+}
+
+body {
+  font-family: var(--body-font);
+}
+
+.fullPageContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  position: relative;
+  background-color: var(--base-white-color);
+}
+
+.background_signin {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.background_signin svg {
+  position: absolute;
+  width: auto;
+}
+
+.svg-top-left {
+  top: 0;
+  left: 0;
+  height: 30%;
+  margin-left: 370px;
+  margin-top: 100px;
+}
+
+.svg-top-right {
+  top: 0;
+  right: 0;
+  height: 30%;
+  margin-right: 370px;
+  margin-top: 100px;
+}
+
+.svg-bottom-left {
+  bottom: 0;
+  left: 0;
+  height: 30%;
+  margin-left: 240px;
+}
+
+.svg-bottom-right {
+  bottom: 0;
+  right: 0;
+  height: 30%;
+  margin-right: 210px;
+  margin-bottom: 100px;
+}
+
+.svg-middle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 600px;
+  transform: translate(-50%, -50%);
+  z-index: 0; /* Placez-le au-dessus des autres SVG */
+}
+
+.wrapper {
+  position: relative;
+  width: 320px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
+  padding: 30px;
+
+  z-index: 1; /* Placez-le au premier plan */
+}
+
+.input-field {
+  width: 100%;
+  height: 45px;
+  border: none;
+  padding: 10px;
+  background-color: #eeeeee;
+  color: gray;
+  outline: none;
+  font-size: 15px;
+  margin-bottom: 20px;
+  transition: 0.5s;
+  border-radius: 5px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.heading {
+  color: var(--first-color);
+  margin-bottom: 20px;
+}
+
+.heading p {
+  color: #aaa8bb;
+}
+
+label {
+  color: #aaa8bb;
+  font-weight: var(--font-medium);
+}
+
+.input-group {
+  width: 100%;
+  height: 45px;
+  border: none;
+  color: #ffffff;
+  background-color: var(--first-color);
+  border-radius: 5px;
+  font-size: 17px;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+.forgotpwd {
+  color: var(--first-color);
+}
+
+.custom-checkbox {
+  width: 17px;
+  height: 17px;
+  border-radius: 5px;
+  background-color: #eeeeee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  margin-right: 5px;
+}
+
+.footer_signin p {
+  color: #aaa8bb;
+}
+
+.footer_signin span {
+  margin-left: 0.5rem;
+}
+
+.footer_signin {
+  display: flex;
+  margin-top: 0.7rem;
+}

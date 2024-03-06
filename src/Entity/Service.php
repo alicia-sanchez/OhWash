@@ -42,15 +42,15 @@ class Service
     #[ORM\JoinColumn(nullable: true)]
     private ?Collection $category_article = null;
 
-    #[ORM\ManyToMany(targetEntity: Orders::class, mappedBy: 'Service')]
-    private Collection $orders;
+    #[ORM\ManyToMany(targetEntity: Order::class, mappedBy: 'Service')]
+    private Collection $order;
     
 
     public function __construct()
     {
         $this->category_service = new ArrayCollection();
         $this->category_article = new ArrayCollection();
-        $this->orders = new ArrayCollection();
+        $this->order = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -158,26 +158,26 @@ class Service
     }
 
     /**
-     * @return Collection<int, Orders>
+     * @return Collection<int, Order>
      */
-    public function getOrders(): Collection
+    public function getOrder(): Collection
     {
-        return $this->orders;
+        return $this->order;
     }
 
-    public function addOrder(Orders $order): static
+    public function addOrder(Order $order): static
     {
-        if (!$this->orders->contains($order)) {
-            $this->orders->add($order);
+        if (!$this->order->contains($order)) {
+            $this->order->add($order);
             $order->addService($this);
         }
 
         return $this;
     }
 
-    public function removeOrder(Orders $order): static
+    public function removeOrder(Order $order): static
     {
-        if ($this->orders->removeElement($order)) {
+        if ($this->order->removeElement($order)) {
             $order->removeService($this);
         }
 

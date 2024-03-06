@@ -28,15 +28,22 @@ class AuthController extends AbstractController
     $user->setEmail($data['email']);
     $user->setPlainPassword($data['password']);
 
+    // Hachage du mot de passe et assignation à l'utilisateur
+
+    error_log('Before hashing: ' . $user->getPlainPassword());
+    $hashedPassword = $passwordHasher->hashPassword($user, $user->getPlainPassword());
+    $user->setPassword($hashedPassword);    
+    error_log('After hashing: ' . $hashedPassword);
+
     // Validation de l'entité User
     $errors = $validator->validate($user);
     if (count($errors) > 0) {
         return $this->json(['status' => 'error', 'message' => (string) $errors], Response::HTTP_BAD_REQUEST);
     }
 
-    // Hachage du mot de passe et assignation à l'utilisateur
-    $hashedPassword = $passwordHasher->hashPassword($user, $user->getPlainPassword());
-    $user->setPassword($hashedPassword);
+
+
+
 
     $entityManager->persist($user);
     $entityManager->flush();

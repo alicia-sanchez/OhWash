@@ -24,11 +24,14 @@ class UserListener
     /**
      
 Encode password based on plainPassword*/
-  public function hashPassword(User $user){
-      if($user->getPassword() === null) {
-          return;}
+public function hashPassword(User $user){
+    if($user->getPlainPassword() === null) {
+        return;
+        
+}
+    $user->setPassword($this->hasher->hashPassword($user, $user->getPlainPassword()));
+    $user->eraseCredentials(); 
+}
 
-        $user->setPassword($this->hasher->hashPassword($user, $user->getPassword()));
-    }
 
 }
