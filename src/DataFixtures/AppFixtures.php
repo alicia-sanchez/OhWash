@@ -10,7 +10,7 @@ use App\Entity\CategoryService;
 use App\Entity\Service;
 use App\Entity\CategoryArticle; 
 use App\Entity\Article; 
-use App\Entity\Orders;
+use App\Entity\Order;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
@@ -530,7 +530,7 @@ foreach (self::ARTICLES as $key => $value) {
 
 
 //Création d'utilisateurs
-        for ($i = 0; $i < 8; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $user = new User();
             $user
                 ->setEmail($faker->email)
@@ -568,7 +568,7 @@ foreach (self::ARTICLES as $key => $value) {
 $services = $manager->getRepository(Service::class)->findAll();
 
 for ($j = 0; $j < 15; $j++) {
-    $order = new Orders();
+    $order = new Order();
     $order->setStatus($faker->randomElement(['à traiter', 'en cours', 'terminée']));
     $order->setStatusDate($faker->dateTimeThisYear());
     $order->setPaymentDate($faker->dateTimeThisYear());

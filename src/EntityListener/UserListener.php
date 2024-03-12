@@ -11,10 +11,13 @@ class UserListener
     {
     }
 
+
     public function prePersist(User $user)
     {
         $this->hashPassword($user);
+        
     }
+
 
     public function preUpdate(User $user)
     {
@@ -25,11 +28,14 @@ class UserListener
      
 Encode password based on plainPassword*/
 public function hashPassword(User $user){
-    if($user->getPlainPassword() === null) {
+    if($user->getPassword() === null) {
         return;
         
+
+
 }
-    $user->setPassword($this->hasher->hashPassword($user, $user->getPlainPassword()));
+    $user->setPassword($this->hasher->hashPassword($user, $user->getPassword()));
+
     $user->eraseCredentials(); 
 }
 
